@@ -326,8 +326,8 @@ end
 local floating_resize_amount = dpi(20)
 local tiling_resize_factor = 0.05
 ---------------
-function helpers.resize_dwim(c, direction)
-	if awful.layout.get(mouse.screen) == awful.layout.suit.floating or (c and c.floating) then
+function helpers.resize_client(c, direction)
+	if c and c.floating or awful.layout.get(mouse.screen) == awful.layout.suit.floating then
 		if direction == "up" then
 			c:relative_move(0, 0, 0, -floating_resize_amount)
 		elseif direction == "down" then
@@ -337,7 +337,7 @@ function helpers.resize_dwim(c, direction)
 		elseif direction == "right" then
 			c:relative_move(0, 0, floating_resize_amount, 0)
 		end
-	else
+	elseif awful.layout.get(mouse.screen) ~= awful.layout.suit.floating then
 		if direction == "up" then
 			awful.client.incwfact(-tiling_resize_factor)
 		elseif direction == "down" then
@@ -347,6 +347,24 @@ function helpers.resize_dwim(c, direction)
 		elseif direction == "right" then
 			awful.tag.incmwfact(tiling_resize_factor)
 		end
+	end
+end
+
+-- Move client DWIM (Do What I Mean)
+-- Move to edge if the client / layout is floating
+-- Swap by index if maximized
+-- Else swap client by direction
+function helpers.move_client(c, direction)
+	if c.floating or (awful.layout.get(mouse.screen) == awful.layout.suit.floating) then
+		helpers.move_to_edge(c, direction)
+	elseif awful.layout.get(mouse.screen) == awful.layout.suit.max then
+		if direction == "up" or direction == "left" then
+			awful.client.swap.byidx(-1, c)
+		elseif direction == "down" or direction == "right" then
+			awful.client.swap.byidx(1, c)
+		end
+	else
+		awful.client.swap.bydirection(direction, c, nil)
 	end
 end
 
@@ -379,24 +397,6 @@ function helpers.move_to_edge(c, direction)
 			nil,
 			nil,
 		})
-	end
-end
-
--- Move client DWIM (Do What I Mean)
--- Move to edge if the client / layout is floating
--- Swap by index if maximized
--- Else swap client by direction
-function helpers.move_client_dwim(c, direction)
-	if c.floating or (awful.layout.get(mouse.screen) == awful.layout.suit.floating) then
-		helpers.move_to_edge(c, direction)
-	elseif awful.layout.get(mouse.screen) == awful.layout.suit.max then
-		if direction == "up" or direction == "left" then
-			awful.client.swap.byidx(-1, c)
-		elseif direction == "down" or direction == "right" then
-			awful.client.swap.byidx(1, c)
-		end
-	else
-		awful.client.swap.bydirection(direction, c, nil)
 	end
 end
 
@@ -567,40 +567,6 @@ end
 
 function helpers.send_key_sequence(c, seq)
 	awful.spawn.with_shell("xdotool type --delay 5 --window " .. tostring(c.window) .. " " .. seq)
-end
-
-local prompt_font = beautiful.prompt_font
-function helpers.prompt(action, textbox, prompt, callback)
-	if action == "run" then
-		awful.prompt.run({
-			prompt = prompt,
-			textbox = textbox,
-			font = prompt_font,
-			done_callback = callback,
-			exe_callback = awful.spawn,
-			completion_callback = awful.completion.shell,
-			history_path = awful.util.get_cache_dir() .. "/history",
-		})
-	elseif action == "web_search" then
-		awful.prompt.run({
-			prompt = prompt,
-			textbox = textbox,
-			font = prompt_font,
-			history_path = awful.util.get_cache_dir() .. "/history_web",
-			done_callback = callback,
-			exe_callback = function(input)
-				if not input or #input == 0 then
-					return
-				end
-				awful.spawn.with_shell("noglob " .. web_search_cmd .. "'" .. input .. "'")
-				naughty.notify({
-					title = "Searching the web for",
-					text = input,
-					urgency = "low",
-				})
-			end,
-		})
-	end
 end
 
 -- Given a `match` condition, returns an array with clients that match it, or
