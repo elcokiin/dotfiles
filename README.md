@@ -8,8 +8,7 @@ feh mpv mpd mpc mpdris2 ncmpcpp playerctl --needed
 ```
 
 ## Install custom apps
-```paru -Sy brave visual-studio-code-bin spotify-bin foliate remnote
-```
+``` paru -Sy brave visual-studio-code-bin spotify-bin foliate remnote ```
 
 ## Enable services
 
@@ -29,5 +28,4 @@ cp -r misc/fonts/* ~/.fonts/
 cp -r misc/fonts/* /usr/share/fonts/
 ```
 
-```fc-cache -v
-```
+``` fc-cache -v ```
