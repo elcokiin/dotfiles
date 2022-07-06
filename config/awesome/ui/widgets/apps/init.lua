@@ -53,9 +53,9 @@ local all_apps = function()
 			cmd = "code",
 		},
 		{
-			name = "Foliate",
-			icon = "foliate.svg",
-			cmd = "foliate",
+			name = "Discord",
+			icon = "discord.svg",
+			cmd = "snap run discord",
 		},
 		{
 			name = "RemNote",
