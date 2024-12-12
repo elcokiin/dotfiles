@@ -1,0 +1,17 @@
+
+# cat
+alias cat="bat"
+
+# lsd
+alias ll='lsd -lh --group-dirs=first'
+alias la='lsd -a --group-dirs=first'
+alias ls='lsd --group-dirs=first'
+alias lla='lsd -lha --group-dirs=first'
+alias lsal="lsd -al"
+
+# git
+alias gpt="save_tgpt_output"
+
+# nvim
+alias vi="nvim"
+
