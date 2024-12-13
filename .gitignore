@@ -1,0 +1,20 @@
+
+.env
+
+node_modules/
+
+# Compiled Lua sources
+luac.out
+
+# luarocks build files
+*.src.rock
+*.zip
+*.tar.gz
+
+# Libraries
+*.lib
+*.a
+*.la
+*.lo
+*.def
+*.exp
