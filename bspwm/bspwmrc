@@ -1,0 +1,25 @@
+#! /bin/sh
+
+# Load environment variables
+if [ -f ~/.env ]; then
+	export $(grep -v '^#' ~/.env | xargs)
+fi
+
+# Sxhkd
+pgrep -x sxhkd > /dev/null || sxhkd &
+pgrep -x picom > /dev/null || picom &
+
+# bspwm config
+bspc config border_width         1
+bspc config window_gap         4 
+bspc config split_ratio         0.5 
+bspc config borderless_monocle   true
+bspc config gapless_monocle      true
+
+# add wallpaper image
+if [ -n "$WALLPAPER_PATH" ]; then
+	feh --bg-fill "$WALLPAPER_PATH" &
+fi
+
+modkey=super
+
