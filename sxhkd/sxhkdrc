@@ -1,0 +1,96 @@
+# open terminal (kitty)
+super + Return 
+	kitty
+
+# close focused window
+super + q
+	bspc node -c 
+
+# open brave navigator
+super + shift + n
+	brave
+
+super + p + o 
+	yad --center --title="Confirmación" --text="¿Seguro que quieres apagar el sistema?" --button=No:1 --button=Sí:0 && systemctl poweroff
+
+
+######## ADMIN WINDOWS ########
+
+# collapse windows
+super + d
+	bspc query -N -n .hidden.window | xargs -I{} bspc node {} -g hidden
+
+# alter to monocle design
+super + f
+	bspc desktop -l next
+
+# alter window fullscreen like windows environment
+alt + Tab
+	bspc node -f next.local
+
+# move focus to left window
+super + {h,Left}
+	bspc node -f west
+
+# move focus to right window
+super + {l,Right}
+	bspc node -f east
+
+# move focus to top window
+super + {k,Up}
+	bspc node -f north
+
+# move focus to botton window
+super + {j,Down}
+	bspc node -f south
+
+
+# enlarge window to right
+super + alt + l
+	bspc node -z right 20 0
+
+# short window to right
+super + alt + shift + h
+	bspc node -z right -20 0
+
+# enlarge window to left
+super + alt + h
+	bspc node -z left -20 0
+
+# short window to left 
+super + alt + shift + l
+	bspc node -z left 20 0
+
+# enlarge window to bottom
+super + alt + j
+	bspc node -z bottom 0 20
+
+# enlarge window to top
+super + alt + k
+	bspc node -z top 0 -20
+
+######## ########
+
+######## AUDIO ########
+# toggle between mute and unmute sound
+F9
+	wpctl set-mute @DEFAULT_SINK@ toggle
+# Dicrease 10%
+F10
+	~/.local/bin/volume-control.sh down
+
+# Increase 10%
+F11
+	~/.local/bin/volume-control.sh up 
+
+######## ########
+
+######## BRIGHTNESS SCREEN ########
+# Increase 10%
+F4
+	brightnessctl set +10%
+# Decrease 10%
+F3
+	brightnessctl set 10%-
+######## ########
+
