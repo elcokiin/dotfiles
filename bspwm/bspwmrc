@@ -21,5 +21,8 @@ if [ -n "$WALLPAPER_PATH" ]; then
 	feh --bg-fill "$WALLPAPER_PATH" &
 fi
 
+# Rule yad window floting
+bspc rule -a Yad state=floating center=true
+
 modkey=super
 
