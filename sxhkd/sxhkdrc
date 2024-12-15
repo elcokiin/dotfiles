@@ -10,6 +10,7 @@ super + q
 super + shift + n
 	brave
 
+# poweroff pc
 super + p + o 
 	yad --center --title="Confirmación" --text="¿Seguro que quieres apagar el sistema?" --button=No:1 --button=Sí:0 && systemctl poweroff
 
@@ -21,8 +22,16 @@ super + d
 	bspc query -N -n .hidden.window | xargs -I{} bspc node {} -g hidden
 
 # alter to monocle design
-super + f
+super + z
 	bspc desktop -l next
+
+# alter to monocle design
+super + f
+    if bspc query -N -n focused.floating > /dev/null; then \
+        bspc node -t tiled; \
+    else \
+        bspc node -t floating && bspc node -v center; \
+    fi
 
 # alter window fullscreen like windows environment
 alt + Tab
@@ -65,9 +74,17 @@ super + alt + shift + l
 super + alt + j
 	bspc node -z bottom 0 20
 
+# short window to bottom
+super + alt + shift + k
+	bspc node -z bottom 0 -20
+
 # enlarge window to top
 super + alt + k
 	bspc node -z top 0 -20
+
+# short window to top
+super + alt + shift + j
+	bspc node -z top 0 20
 
 ######## ########
 

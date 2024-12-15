@@ -3,6 +3,9 @@
 
 node_modules/
 
+# nvim plugins
+lazy-lock.json
+
 # Compiled Lua sources
 luac.out
 
