@@ -14,9 +14,18 @@ super + shift + n
 super + p + o 
 	yad --center --title="Confirmación" --text="¿Seguro que quieres apagar el sistema?" --button=No:1 --button=Sí:0 && systemctl poweroff
 
+######## ADMIN DESKS ########
+# change desk
+super + {0-9}
+	bspc desktop -f {0-9}
+
+# move focused window to other desk
+super + alt + {0-9}
+	bspc node -d {0-9}
+
+######## ########
 
 ######## ADMIN WINDOWS ########
-
 # collapse windows
 super + d
 	bspc query -N -n .hidden.window | xargs -I{} bspc node {} -g hidden

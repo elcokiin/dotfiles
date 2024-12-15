@@ -5,6 +5,9 @@ if [ -f ~/.env ]; then
 	export $(grep -v '^#' ~/.env | xargs)
 fi
 
+# Creat 10 desks
+bspc monitor -d 1 2 3 4 5 6 7 8 9 0
+
 # Sxhkd
 pgrep -x sxhkd > /dev/null || sxhkd &
 pgrep -x picom > /dev/null || picom &
