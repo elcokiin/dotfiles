@@ -11,7 +11,7 @@ super + shift + n
 	brave
 
 # poweroff pc
-super + p + o 
+super + o 
 	yad --center --title="Confirmación" --text="¿Seguro que quieres apagar el sistema?" --button=No:1 --button=Sí:0 && systemctl poweroff
 
 ######## ADMIN DESKS ########

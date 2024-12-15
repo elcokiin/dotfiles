@@ -1,6 +1,7 @@
 
 # cat
 alias cat="bat"
+alias old_cat="/bin/cat"
 
 # lsd
 alias ll='lsd -lh --group-dirs=first'

@@ -1,0 +1,13 @@
+
+# /etc/systemd/system/battery-monitor.timer
+
+[Unit]
+Description=Run battery monitor every minute 
+
+[Timer]
+OnUnitActiveSec=1m
+Unit=battery-monitor.service
+
+[Install]
+WantedBy=timers.target
+

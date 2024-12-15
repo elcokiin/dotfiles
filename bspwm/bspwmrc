@@ -8,9 +8,10 @@ fi
 # Creat 10 desks
 bspc monitor -d 1 2 3 4 5 6 7 8 9 0
 
-# Sxhkd
+# Init aplications 
 pgrep -x sxhkd > /dev/null || sxhkd &
 pgrep -x picom > /dev/null || picom &
+pgrep -x dunst > /dev/null || dunst &
 
 # bspwm config
 bspc config border_width         1
