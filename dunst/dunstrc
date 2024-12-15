@@ -1,0 +1,26 @@
+
+[global]
+  font = Monospace 10
+  shrink = true
+  transparency = 0
+  idle_threshold = 0
+  sort = true
+  show_age_threshold = 60
+  alignment = left
+  sticky_history = true
+
+[low]
+  background = "#222222"
+  foreground = "#ffffff"
+  timeout = 5
+
+[normal]
+  background = "#444444"
+  foreground = "#ffffff"
+  timeout = 10
+
+[critical]
+  background = "#ff4444"
+  foreground = "#ffffff"
+  timeout = 0
+
