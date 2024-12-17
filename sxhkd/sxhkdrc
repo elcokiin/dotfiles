@@ -11,10 +11,6 @@ super + alt + {0-9}
 ######## ########
 
 ######## ADMIN WINDOWS ########
-# collapse windows
-super + d
-	bspc query -N -n .hidden.window | xargs -I{} bspc node {} -g hidden
-
 # alter to monocle design
 super + z
 	bspc desktop -l next
@@ -88,11 +84,11 @@ F9
 	wpctl set-mute @DEFAULT_SINK@ toggle
 # Dicrease 10%
 F10
-	~/.local/bin/volume-control.sh down
+	"$SCRIPT_VOLUME" down
 
 # Increase 10%
 F11
-	~/.local/bin/volume-control.sh up 
+	"$SCRIPT_VOLUME" up 
 
 ######## ########
 
@@ -128,7 +124,7 @@ super + o
 	yad --center --title="Confirmación" --text="¿Seguro que quieres apagar el sistema?" --button=No:1 --button=Sí:0 && systemctl poweroff
 
 super + c
-	xcolor | xclip -selection clipboard && notify-send -u low -i /home/elcokiin/Images/icons/colorpiker-removebg.png "Copied color" "$(xclip -o -selection clipboard)"
+	xcolor | xclip -selection clipboard && notify-send -u low -i "$ICON_COLORS" "Copied color" "$(xclip -o -selection clipboard)"
 
 ######## ########
 

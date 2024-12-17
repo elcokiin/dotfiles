@@ -2,6 +2,7 @@
 .env
 
 node_modules/
+*.out
 
 # nvim plugins
 lazy-lock.json
