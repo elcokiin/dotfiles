@@ -1,5 +1,7 @@
 #!/bin/zsh
 
+# ~/.local/bin/watch-template.sh
+
 # Directory for dotfiles
 WATCH_DIR="$PATH_DOTFILES"
 

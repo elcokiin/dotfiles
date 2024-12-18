@@ -22,8 +22,8 @@ bspc config borderless_monocle   true
 bspc config gapless_monocle      true
 
 # add wallpaper image
-if [ -n "$WALLPAPER_PATH" ]; then
-	feh --bg-fill "$WALLPAPER_PATH" &
+if [ -n "$PATH_WALLPAPER" ]; then
+	feh --bg-fill "$PATH_WALLPAPER" &
 fi
 
 # Rule yad window floting

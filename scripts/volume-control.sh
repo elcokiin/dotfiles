@@ -1,5 +1,6 @@
 #!/bin/bash
 
+# ~/.local/bin/volume-control.sh
 current_volume=$(wpctl get-volume @DEFAULT_AUDIO_SINK@ | awk '{print $2}')
 
 current_percentage=$(awk "BEGIN {print $current_volume * 100}")

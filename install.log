@@ -1,0 +1,51 @@
+
+================
+Start creating symlinks: Tue Dec 17 19:03:50 -05 2024
+================
+
+The directory 'bspwm' alrady exist in /home/elcokiin/.config.
+Making backup for 'bspwm' -> 'bspwm'-back
+Deleting before backup for: 'bspwm'
+Deleting original directory: 'bspwm'
+Creating symlink for: 'bspwm'...
+The directory 'dunst' alrady exist in /home/elcokiin/.config.
+Making backup for 'dunst' -> 'dunst'-back
+Deleting before backup for: 'dunst'
+Deleting original directory: 'dunst'
+Creating symlink for: 'dunst'...
+The directory 'kitty' alrady exist in /home/elcokiin/.config.
+Making backup for 'kitty' -> 'kitty'-back
+Deleting before backup for: 'kitty'
+Deleting original directory: 'kitty'
+Creating symlink for: 'kitty'...
+The directory 'nvim' alrady exist in /home/elcokiin/.config.
+Making backup for 'nvim' -> 'nvim'-back
+Deleting before backup for: 'nvim'
+Deleting original directory: 'nvim'
+Creating symlink for: 'nvim'...
+The directory 'picom' alrady exist in /home/elcokiin/.config.
+Making backup for 'picom' -> 'picom'-back
+Deleting before backup for: 'picom'
+Deleting original directory: 'picom'
+Creating symlink for: 'picom'...
+The directory 'sxhkd' alrady exist in /home/elcokiin/.config.
+Making backup for 'sxhkd' -> 'sxhkd'-back
+Deleting before backup for: 'sxhkd'
+Deleting original directory: 'sxhkd'
+Creating symlink for: 'sxhkd'...
+The file 'battery-monitor.sh' alrady exist in '/home/elcokiin/.local/bin'
+Making backup for 'battery-monitor.sh'-> 'sxhkd'.back
+Delating original file 'battery-monitor.sh'...
+Creating the symlink for 'battery-monitor.sh'...
+The file 'volume-control.sh' alrady exist in '/home/elcokiin/.local/bin'
+Making backup for 'volume-control.sh'-> 'sxhkd'.back
+Delating original file 'volume-control.sh'...
+Creating the symlink for 'volume-control.sh'...
+The file 'watch-template.sh' alrady exist in '/home/elcokiin/.local/bin'
+Making backup for 'watch-template.sh'-> 'sxhkd'.back
+Delating original file 'watch-template.sh'...
+Creating the symlink for 'watch-template.sh'...
+Creating symlinks for battery-monitor daemon
+
+Finish symlinks creations: Tue Dec 17 19:03:51 -05 2024
+
