@@ -3,6 +3,7 @@
 
 node_modules/
 *.out
+*.log
 
 # nvim plugins
 lazy-lock.json
