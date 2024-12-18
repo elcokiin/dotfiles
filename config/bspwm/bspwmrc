@@ -28,6 +28,7 @@ fi
 
 # Rule yad window floting
 bspc rule -a Yad state=floating center=true
+bspc rule -a Nemo state=floating rectangle=800x600+200+100 center=true
 
 modkey=super
 
