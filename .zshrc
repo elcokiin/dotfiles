@@ -16,6 +16,11 @@ setopt hist_save_no_dups
 setopt hist_ignore_dups
 setopt hist_find_no_dups
 
+# Load environment variables
+if [ -f ~/.env ]; then
+	export $(grep -v '^#' ~/.env | xargs)
+fi
+
 # Function to save tgpt output
 save_tgpt_output() {
     local timestamp=$(date +"%Y%m%d_%H%M%S")

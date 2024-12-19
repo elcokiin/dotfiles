@@ -13,5 +13,5 @@ if [ "$BATTERY_STATUS" = "Discharging" ] && [ "$BATTERY_LEVEL" -le "$LOW_BATTERY
 fi
 
 if [ "$BATTERY_STATUS" = "Charging" ]; then
-	dusntctl close-all
+	dunstctl close-all
 fi

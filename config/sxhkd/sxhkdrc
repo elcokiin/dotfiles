@@ -43,7 +43,6 @@ super + {k,Up}
 super + {j,Down}
 	bspc node -f south
 
-
 # enlarge window to right
 super + alt + l
 	bspc node -z right 20 0
@@ -121,7 +120,8 @@ super + q
 
 # poweroff pc
 super + o 
-	yad --center --title="Confirmation" --text="Are you sure you want to shut down the system?" --button=No:1 --button=Yes:0 && systemctl poweroff
+	"$SCRIPT_POWERMENU"
+# yad --center --title="Confirmation" --text="Are you sure you want to shut down the system?" --button=No:1 --button=Yes:0 && systemctl poweroff
 
 super + c
 	xcolor | xclip -selection clipboard && notify-send -u low -i "$ICON_COLORS" "Copied color" "$(xclip -o -selection clipboard)"
@@ -129,6 +129,10 @@ super + c
 # open nemo file manager
 super + e
 	nemo
+
+# open launcher
+super + space 
+	"$SCRIPT_LAUNCHER"
 
 ######## ########
 

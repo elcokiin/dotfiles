@@ -25,6 +25,8 @@ echo "Start creating symlinks: $(date)"
 echo "================================================================================================================================"
 echo ""
 
+echo "To see what the script has just done visit the file: '$LOG_FILE'" > /dev/tty
+
 if [ ! -d "$CONFIG_DIR" ]; then
     echo "The directory config doesnt exist in dotfiles. Creating..."
     mkdir -p "$CONFIG_DIR"
@@ -73,7 +75,8 @@ for file in "$SCRIPTS_DIR"/*; do
 done
 
 echo "Creating symlinks for battery-monitor daemon"
-ln -sf "$DOTFILES_DIR/systemd/battery-monitor.service" "$SERVICES_PATH/battery-monitor.service" || { echo "Error creating symlink for battery-monitor.service"; exit 1; } ln -sf "$DOTFILES_DIR/systemd/battery-monitor.timer" "$SERVICES_PATH/battery-monitor.timer" || { echo "Error creating symlink for battery-monitor.timer"; exit 1; }
+ln -sf "$DOTFILES_DIR/systemd/battery-monitor.service" "$SERVICES_PATH/battery-monitor.service" || { echo "Error creating symlink for battery-monitor.service"; exit 1; } 
+ln -sf "$DOTFILES_DIR/systemd/battery-monitor.timer" "$SERVICES_PATH/battery-monitor.timer" || { echo "Error creating symlink for battery-monitor.timer"; exit 1; }
 ln -sf "$DOTFILES_DIR/scripts/battery-monitor.sh" "$ROOT_SCRIPTS_DIR/battery-monitor.sh" || { echo "Error creating symlink for battery-monitor.sh"; exit 1; }
 
 ######## ########
@@ -114,5 +117,4 @@ echo "Finish symlinks creations: $(date)"
 echo "================================================================================================================================"
 echo ""
 
-echo "To see what the script has just done visit the file: '$LOG_FILE'" > /dev/tty
 
