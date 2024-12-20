@@ -42,8 +42,10 @@ window {
     y-offset:                    0px;
 
     /* properties for all widgets */
+    border:                      2px solid;
+		border-color:								 @background-alt;
     enabled:                     true;
-    border-radius:               20px;
+    border-radius:               12px;
     cursor:                      "default";
     background-color:            @background;
 }

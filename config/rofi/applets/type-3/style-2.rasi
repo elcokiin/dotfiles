@@ -26,14 +26,14 @@ window {
     location:                    east;
     anchor:                      east;
     fullscreen:                  false;
-    width:                       120px;
-    x-offset:                    -20px;
+    width:                       88px;
+    x-offset:                    -12px;
     y-offset:                    0px;
     margin:                      0px;
     padding:                     0px;
-    border:                      0px solid;
-    border-radius:               10px;
-    border-color:                @selected;
+    border:                      2px solid;
+    border-radius:               12px;
+    border-color:                @background-alt;
     cursor:                      "default";
     background-color:            @background;
 }
@@ -51,7 +51,7 @@ mainbox {
 /*****----- Inputbar -----*****/
 inputbar {
     enabled:                     true;
-    spacing:                     10px;
+    spacing:                     0px;
     padding:                     0px;
     border:                      0px;
     border-radius:               0px;
@@ -65,14 +65,14 @@ textbox-prompt-colon {
     enabled:                     true;
     expand:                      false;
     str:                         "";
-    padding:                     10px 13px;
+    padding:                     8px 12px;
     border-radius:               0px;
     background-color:            @urgent;
     text-color:                  @background;
 }
 prompt {
     enabled:                     true;
-    padding:                     10px;
+    padding:                     8px;
     border-radius:               0px;
     background-color:            @active;
     text-color:                  @background;
@@ -105,7 +105,7 @@ listview {
     scrollbar:                   false;
     layout:                      vertical;
     
-    spacing:                     15px;
+    spacing:                     12px;
     background-color:            transparent;
     cursor:                      "default";
 }
@@ -113,9 +113,9 @@ listview {
 /*****----- Elements -----*****/
 element {
     enabled:                     true;
-    padding:                     23px 10px;
+    padding:                     8px 8px;
     border:                      0px solid;
-    border-radius:               10px;
+    border-radius:               12px;
     border-color:                @selected;
     background-color:            transparent;
     text-color:                  @foreground;

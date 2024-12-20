@@ -135,14 +135,14 @@ super + space
 	"$SCRIPT_LAUNCHER"
 
 # open battery applet
-super + b
+super + u
 	"$SCRIPT_BATTERY"
 
 # open brightness applet
 super + i
 	"$SCRIPT_BRIGHTNESS"
 
-super + u
+super + o
 	"$SCRIPT_VOLUME_ROFI"
 ######## ########
 

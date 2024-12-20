@@ -5,21 +5,14 @@
  * 
  * Colors
  *
- * Available Colors Schemes
- *
- * adapta    catppuccin    everforest    navy       paper
- * arc       cyberpunk     gruvbox       nord       solarized
- * black     dracula       lovelace      onedark    yousai
  *
  **/
-
-/* Import color-scheme from `colors` directory */
-
 * {
-    background:     #1E2127FF;
-    background-alt: #282B31FF;
-    foreground:     #FFFFFFFF;
-    selected:       #61AFEFFF;
-    active:         #98C379FF;
-    urgent:         #E06C75FF;
+    background:                  #010101;
+    background-alt:              #141414;
+    foreground:                  #fefefe;
+    selected:                    #3daee9;
+    active:                      #5f6a8e;
+    urgent:                      #bd93f9;
 }
+
