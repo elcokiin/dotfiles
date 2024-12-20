@@ -1,26 +1,22 @@
 #!/bin/bash
 
 # ~/.local/bin/volume-control.sh
-current_volume=$(wpctl get-volume @DEFAULT_AUDIO_SINK@ | awk '{print $2}')
 
-current_percentage=$(awk "BEGIN {print $current_volume * 100}")
+# Get current volume
+current_volume=$(amixer get Master | grep -oP '\[\K[0-9]+(?=%\])')
 
 # increase volume
 if [[ $1 == "up" ]]; then
-	new_percentage=$(awk "BEGIN {print $current_percentage + 10}")
-	if (( $(echo "$new_percentage > 120" | bc -l) )); then
-        wpctl set-volume @DEFAULT_AUDIO_SINK@ 120%
-    else
-        wpctl set-volume @DEFAULT_AUDIO_SINK@ $new_percentage%
+    new_percentage=$((current_volume + 5))
+    if ((new_percentage < 120)); then
+			amixer -Mq set Master,0 5%+ unmute
     fi
 fi
 
-# dincrease volume
+# decrease volume
 if [[ $1 == "down" ]]; then
-	new_percentage=$(awk "BEGIN {print $current_percentage - 10}")
-	if (( $(echo "$new_percentage < 0" | bc -l) )); then
-        wpctl set-volume @DEFAULT_AUDIO_SINK@ 0%
-    else
-        wpctl set-volume @DEFAULT_AUDIO_SINK@ $new_percentage%
+    new_percentage=$((current_volume - 5))
+    if ((new_percentage > 0)); then
+			amixer -Mq set Master,0 5%- unmute
     fi
 fi

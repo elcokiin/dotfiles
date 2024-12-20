@@ -108,7 +108,7 @@ super + shift + n
 
 ######## ########
 
-######## OPEN TOOLS ########
+######## TOOLS ########
 
 # open terminal (kitty)
 super + Return 
@@ -119,7 +119,7 @@ super + q
 	bspc node -c 
 
 # poweroff pc
-super + o 
+super + p 
 	"$SCRIPT_POWERMENU"
 # yad --center --title="Confirmation" --text="Are you sure you want to shut down the system?" --button=No:1 --button=Yes:0 && systemctl poweroff
 
@@ -134,5 +134,15 @@ super + e
 super + space 
 	"$SCRIPT_LAUNCHER"
 
+# open battery applet
+super + b
+	"$SCRIPT_BATTERY"
+
+# open brightness applet
+super + i
+	"$SCRIPT_BRIGHTNESS"
+
+super + u
+	"$SCRIPT_VOLUME_ROFI"
 ######## ########
 

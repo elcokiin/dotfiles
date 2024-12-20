@@ -91,10 +91,10 @@ insensitive view background color on backdrop windows */
 @define-color theme_unfocused_view_bg_color_breeze #191b1d;
 /*
 widgets main borders color */
-@define-color borders_breeze $COLOR13;
+@define-color borders_breeze $COLOR1;
 /*
 widgets main borders color on backdrop windows */
-@define-color unfocused_borders_breeze $COLOR13;
+@define-color unfocused_borders_breeze $COLOR1;
 /*
 widgets main borders color insensitive */
 @define-color insensitive_borders_breeze rgba(86, 89, 92, 0.35);
@@ -106,7 +106,7 @@ widgets main borders color insensitive backdrop */
 * Button Colors
 *
 */
-@define-color theme_button_background_normal_breeze $COLOR12;
+@define-color theme_button_background_normal_breeze $COLOR2;
 @define-color theme_button_decoration_hover_breeze  $COLOR4;
 @define-color theme_button_decoration_focus_breeze  $COLOR4;
 @define-color theme_button_foreground_normal_breeze $COLOR_WHITE;
@@ -116,7 +116,7 @@ widgets main borders color insensitive backdrop */
 @define-color theme_button_decoration_focus_insensitive_breeze  rgba(37, 164, 230, 0.35);
 @define-color theme_button_foreground_insensitive_breeze        rgba(229, 229, 229, 0.35);
 @define-color theme_button_foreground_active_insensitive_breeze rgba(229, 229, 229, 0.35);
-@define-color theme_button_background_backdrop_breeze        $COLOR12;
+@define-color theme_button_background_backdrop_breeze        $COLOR2;
 @define-color theme_button_decoration_hover_backdrop_breeze  $COLOR4;
 @define-color theme_button_decoration_focus_backdrop_breeze  $COLOR4;
 @define-color theme_button_foreground_backdrop_breeze        $COLOR_WHITE;
@@ -147,7 +147,7 @@ these are pretty self explicative */
 * Titlebar Colors
 *
 */
-@define-color theme_titlebar_background_breeze          $COLOR12;
+@define-color theme_titlebar_background_breeze          $COLOR2;
 @define-color theme_titlebar_foreground_breeze          $COLOR_WHITE;
 @define-color theme_titlebar_background_light_breeze    $COLOR1;
 @define-color theme_titlebar_foreground_backdrop_breeze #a1a9b1;
@@ -158,7 +158,7 @@ these are pretty self explicative */
 * Tooltips
 */
 @define-color tooltip_text_breeze $COLOR_WHITE;
-@define-color tooltip_background_breeze $COLOR12;
+@define-color tooltip_background_breeze $COLOR1;
 @define-color tooltip_border_breeze #64686b;
 /*
 * Misc

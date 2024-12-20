@@ -15,12 +15,12 @@ configuration {
 /*****----- Global Properties -----*****/
 * {
     font:                        "Monofur Nerd Font 12";
-    background:                  #11092D;
-    background-alt:              #281657;
-    foreground:                  #FFFFFF;
-    selected:                    #DF5296;
-    active:                      #6E77FF;
-    urgent:                      #8E3596;
+    background:                  $COLOR_BLACK;
+    background-alt:              $COLOR_GRAY;
+    foreground:                  $COLOR_WHITE;
+    selected:                    $COLOR4;
+    active:                      $COLOR2;
+    urgent:                      $COLOR3;
 }
 
 /*
@@ -62,7 +62,7 @@ mainbox {
 inputbar {
     enabled:                     true;
     spacing:                     0px;
-    padding:                     100px 80px;
+    padding:                     32px 100px;
     background-color:            transparent;
     background-image:            url("$PATH_IMAGE_INPUTBAR", width);
     children:                    [ "textbox-prompt-colon", "dummy","prompt"];

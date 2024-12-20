@@ -16,11 +16,6 @@ setopt hist_save_no_dups
 setopt hist_ignore_dups
 setopt hist_find_no_dups
 
-# Load environment variables
-if [ -f ~/.env ]; then
-	export $(grep -v '^#' ~/.env | xargs)
-fi
-
 # Function to save tgpt output
 save_tgpt_output() {
     local timestamp=$(date +"%Y%m%d_%H%M%S")
@@ -74,6 +69,9 @@ bindkey -e
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+export PATH=$PATH:/usr/bin
+export PKG_CONFIG_PATH=/usr/lib/pkgconfig:$PKG_CONFIG_PATH
 
 # Print archlinux
 neofetch
