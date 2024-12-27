@@ -130,6 +130,8 @@ super + c
 super + e
 	nemo
 
+super + s
+	"$SCRIPT_SCREENSHOT"	
 # open launcher
 super + space 
 	"$SCRIPT_LAUNCHER"

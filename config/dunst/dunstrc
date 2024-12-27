@@ -344,7 +344,7 @@
     background = "#010101"
     foreground = "#fefefe"
     frame_color = "#141414"
-   	timeout = 4 
+   	timeout = 6 
     # Icon for notifications with low urgency
     default_icon = dialog-information
 
@@ -352,7 +352,7 @@
     background = "#14161b"
     foreground = "#fefefe"
     frame_color = "#5f6a8e"
-    timeout = 6 
+    timeout = 8 
     override_pause_level = 30
     # Icon for notifications with normal urgency
     default_icon = dialog-information
@@ -361,7 +361,7 @@
     background = "#721B18"
     foreground = "#fefefe"
     frame_color = "#D8332D"
-    timeout = 60
+    timeout = 0
     override_pause_level = 60
     # Icon for notifications with critical urgency
     default_icon = dialog-warning# Every section that isn't one of the above is interpreted as a rules to

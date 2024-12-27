@@ -344,7 +344,7 @@
     background = "$COLOR_BLACK"
     foreground = "$COLOR_WHITE"
     frame_color = "$COLOR_GRAY"
-   	timeout = 4 
+   	timeout = 6 
     # Icon for notifications with low urgency
     default_icon = dialog-information
 
@@ -352,7 +352,7 @@
     background = "$COLOR1"
     foreground = "$COLOR_WHITE"
     frame_color = "$COLOR2"
-    timeout = 6 
+    timeout = 8 
     override_pause_level = 30
     # Icon for notifications with normal urgency
     default_icon = dialog-information
@@ -361,7 +361,7 @@
     background = "$COLOR_ERROR3"
     foreground = "$COLOR_WHITE"
     frame_color = "$COLOR_ERROR1"
-    timeout = 60
+    timeout = 0
     override_pause_level = 60
     # Icon for notifications with critical urgency
     default_icon = dialog-warning# Every section that isn't one of the above is interpreted as a rules to

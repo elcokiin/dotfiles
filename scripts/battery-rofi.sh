@@ -104,9 +104,9 @@ run_rofi() {
 run_cmd() {
 	polkit_cmd="pkexec env PATH=$PATH DISPLAY=$DISPLAY XAUTHORITY=$XAUTHORITY"
 	if [[ "$1" == '--opt1' ]]; then
-		notify-send -i "/" " Remaining : ${percentage}%"
+		notify-send -i "/" "${ICON_DISCHRG} Remaining: ${percentage}%"
 	elif [[ "$1" == '--opt2' ]]; then
-		notify-send -i "/" "$ICON_CHRG Status : $status"
+		notify-send -i "/" "$ICON_CHRG Status: $status"
 	elif [[ "$1" == '--opt3' ]]; then
 		xfce4-power-manager-settings
 	elif [[ "$1" == '--opt4' ]]; then
