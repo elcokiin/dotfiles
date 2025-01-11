@@ -106,6 +106,10 @@ F3
 super + shift + n
 	brave
 
+# open text editor
+super + shift + c 
+	"$PATH_TEXT_EDITOR"
+
 ######## ########
 
 ######## TOOLS ########
@@ -124,7 +128,7 @@ super + p
 # yad --center --title="Confirmation" --text="Are you sure you want to shut down the system?" --button=No:1 --button=Yes:0 && systemctl poweroff
 
 super + c
-	xcolor | xclip -selection clipboard && notify-send -u low -i "$ICON_COLORS" "Copied color" "$(xclip -o -selection clipboard)"
+	xcolor | xclip -selection clipboard && notify-send -u low -i "$ICON_COLORS" "Color copied " "$(xclip -o -selection clipboard)"
 
 # open nemo file manager
 super + e
@@ -137,14 +141,16 @@ super + space
 	"$SCRIPT_LAUNCHER"
 
 # open battery applet
-super + u
-	"$SCRIPT_BATTERY"
+# super + u
+	# "$SCRIPT_BATTERY"
 
 # open brightness applet
-super + i
-	"$SCRIPT_BRIGHTNESS"
+# super + i
+	# "$SCRIPT_BRIGHTNESS"
 
+# super + o
+#	"$SCRIPT_VOLUME_ROFI"
 super + o
-	"$SCRIPT_VOLUME_ROFI"
+	"$SCRIPT_SETTINGS"
 ######## ########
 

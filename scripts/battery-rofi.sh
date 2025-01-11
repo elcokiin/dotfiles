@@ -71,7 +71,7 @@ fi
 # Options
 layout=`cat ${theme} | grep 'USE_ICON' | cut -d'=' -f2`
 if [[ "$layout" == 'NO' ]]; then
-	option_1=" Remaining ${percentage}%"
+	option_1="${ICON_DISCHRG} Remaining ${percentage}%"
 	option_2=" $status"
 	option_3=" Power Manager"
 	option_4=" Diagnose"

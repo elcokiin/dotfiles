@@ -5,10 +5,10 @@ if [ -f ~/.env ]; then
 	export $(grep -v '^#' ~/.env | xargs)
 fi
 
-# Creat 10 desks
+# Create 10 desks
 bspc monitor -d 1 2 3 4 5 6 7 8 9 0
 
-# Init aplications 
+# Init applications 
 pgrep -x sxhkd > /dev/null || sxhkd &
 pgrep -x picom > /dev/null || picom &
 pgrep -x dunst > /dev/null || dunst &
@@ -26,10 +26,10 @@ if [ -n "$PATH_WALLPAPER" ]; then
 	feh --bg-fill "$PATH_WALLPAPER" &
 fi
 
-# Rule yad window floting
+# Rule yad window floating
 bspc rule -a Yad state=floating center=true
 bspc rule -a Nemo state=floating rectangle=800x600+200+100 center=true
 bspc rule -a pavucontrol state=floating rectangle=800x600+200+100 center=true
+bspc rule -a nm-connection-editor state=floating rectangle=800x600+200+100 center=true
 
 modkey=super
-
