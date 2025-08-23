@@ -2,6 +2,8 @@
 require("keymaps.cmp")
 require("keymaps.gitgutter")
 require("keymaps.nvimtree")
+require("keymaps.snacks")
+require("keymaps.opencode")
 --require("keymaps.nerdtree")
 
 vim.g.mapleader = " "

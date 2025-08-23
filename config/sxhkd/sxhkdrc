@@ -84,6 +84,9 @@ F9
 # Dicrease 10%
 F10
 	"$SCRIPT_VOLUME" down
+# Toggle microphone on/off
+super + i
+	amixer set Capture toggle
 
 # Increase 10%
 F11

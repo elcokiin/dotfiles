@@ -83,7 +83,7 @@ run_cmd() {
 	elif [[ "$1" == '--opt2' ]]; then
 		light -S 25
 	elif [[ "$1" == '--opt3' ]]; then
-		brightnessctl set 10%-
+		brightnessctl set 2%-	
 	elif [[ "$1" == '--opt4' ]]; then
 		xfce4-power-manager-settings
 	fi
