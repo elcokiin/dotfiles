@@ -13,7 +13,7 @@ map("n", "<C-b>", function()
 end, vim.tbl_extend("force", opts, { desc = "Ask about cursor" }))
 
 -- Ask about selection
-map("v", "<S-C-b>", function()
+map("v", "<C-b>", function()
   require("opencode").ask("@selection: ")
 end, vim.tbl_extend("force", opts, { desc = "Ask about selection" }))
 
@@ -23,17 +23,7 @@ map("n", "<C-o>", function()
 end, vim.tbl_extend("force", opts, { desc = "Toggle Opencode terminal" }))
 
 -- Copy last message
-map("n", "<S-C-c>", function()
+map("n", "<C-S-c>", function()
   require("opencode").command("messages_copy")
 end, vim.tbl_extend("force", opts, { desc = "Copy last message" }))
-
--- Scroll messages up
-map("n", "<S-C-u>", function()
-  require("opencode").command("messages_half_page_up")
-end, vim.tbl_extend("force", opts, { desc = "Scroll messages up" }))
-
--- Scroll messages down
-map("n", "<S-C-d>", function()
-  require("opencode").command("messages_half_page_down")
-end, vim.tbl_extend("force", opts, { desc = "Scroll messages down" }))
 
