@@ -1,5 +1,7 @@
 #!/bin/sh
 
+# THIS FILE IS NOT UPDATED 
+
 HOME_DIR=/home/elcokiin
 
 DOTFILES_DIR=/home/elcokiin/Code/dotfiles

@@ -1,22 +1,18 @@
-
 /* GTK NAMED COLORS
-   ----------------------
-   use responsibly! 
-	file taken from: https://github.com/L4ki/Colorful-Plasma-Themes/blob/main/Colorful%20GTK%20Themes/gtk-3.0/gtk.css
- */
+   ------------------------
+   use responsibly! */
 /*
-
 widget text/foreground color */
-@define-color theme_fg_color_breeze #fefefe;
+@define-color theme_fg_color_breeze #fcfcfc;
 /*
 text color for entries, views and content in general */
-@define-color theme_text_color_breeze #fefefe;
+@define-color theme_text_color_breeze #fcfcfc;
 /*
 widget base background color */
-@define-color theme_bg_color_breeze #14161b;
+@define-color theme_bg_color_breeze #2a2e32;
 /*
 text widgets and the like base background color */
-@define-color theme_base_color_breeze #15151C;
+@define-color theme_base_color_breeze #1b1e20;
 /*
 view hover decoration color*/
 @define-color theme_view_hover_decoration_color_breeze #3daee9;
@@ -28,7 +24,7 @@ base background color of selections */
 @define-color theme_selected_bg_color_breeze #3daee9;
 /*
 text/foreground color of selections */
-@define-color theme_selected_fg_color_breeze #fefefe;
+@define-color theme_selected_fg_color_breeze #fcfcfc;
 /*
 decoration color of views */
 @define-color theme_view_active_decoration_color_breeze #3daee9;
@@ -37,7 +33,7 @@ base background color of insensitive selections */
 @define-color insensitive_selected_bg_color_breeze rgba(37, 164, 230, 0.35);
 /*
 base background color of insensitive widgets */
-@define-color insensitive_bg_color_breeze #5f6a8e;
+@define-color insensitive_bg_color_breeze #262a2d;
 /*
 text foreground color of insensitive widgets */
 @define-color insensitive_fg_color_breeze rgba(229, 229, 229, 0.35);
@@ -52,16 +48,16 @@ insensitive selected text widgets and the like base background color */
 @define-color insensitive_selected_fg_color_breeze rgba(229, 229, 229, 0.35);
 /*
 widget text/foreground color on backdrop windows */
-@define-color theme_unfocused_fg_color_breeze #fefefe;
+@define-color theme_unfocused_fg_color_breeze #fcfcfc;
 /*
 text color for entries, views and content in general on backdrop windows */
-@define-color theme_unfocused_text_color_breeze #fefefe;
+@define-color theme_unfocused_text_color_breeze #fcfcfc;
 /*
 widget base background color on backdrop windows */
-@define-color theme_unfocused_bg_color_breeze #14161b;
+@define-color theme_unfocused_bg_color_breeze #2a2e32;
 /*
 text widgets and the like base background color on backdrop windows */
-@define-color theme_unfocused_base_color_breeze #15151C;
+@define-color theme_unfocused_base_color_breeze #1b1e20;
 /*
 base background color of selections on backdrop windows, alt */
 @define-color theme_unfocused_selected_bg_color_alt_breeze #3daee9;
@@ -70,7 +66,7 @@ base background color of selections on backdrop windows */
 @define-color theme_unfocused_selected_bg_color_breeze rgba(61, 174, 233, 0.5);
 /*
 text/foreground color of selections on backdrop windows */
-@define-color theme_unfocused_selected_fg_color_breeze #fefefe;
+@define-color theme_unfocused_selected_fg_color_breeze #fcfcfc;
 /*
 base background color of insensitive selections on backdrop windows */
 @define-color insensitive_unfocused_selected_bg_color_breeze rgba(37, 164, 230, 0.35);
@@ -79,7 +75,7 @@ text foreground color of insensitive widgets on backdrop windows*/
 @define-color insensitive_unfocused_fg_color_breeze rgba(229, 229, 229, 0.35);
 /*
 backdground color of insensitive widgets on backdrop windows*/
-@define-color insensitive_unfocused_bg_color_breeze #5f6a8e;
+@define-color insensitive_unfocused_bg_color_breeze #262a2d;
 /*
 text foreground color of insensitive selected widgets on backdrop windows*/
 @define-color insensitive_unfocused_selected_fg_color_breeze rgba(229, 229, 229, 0.35);
@@ -91,10 +87,10 @@ insensitive view background color on backdrop windows */
 @define-color theme_unfocused_view_bg_color_breeze #191b1d;
 /*
 widgets main borders color */
-@define-color borders_breeze #14161b;
+@define-color borders_breeze #5f6265;
 /*
 widgets main borders color on backdrop windows */
-@define-color unfocused_borders_breeze #14161b;
+@define-color unfocused_borders_breeze #5f6265;
 /*
 widgets main borders color insensitive */
 @define-color insensitive_borders_breeze rgba(86, 89, 92, 0.35);
@@ -106,21 +102,21 @@ widgets main borders color insensitive backdrop */
 * Button Colors
 *
 */
-@define-color theme_button_background_normal_breeze #5f6a8e;
+@define-color theme_button_background_normal_breeze #31363b;
 @define-color theme_button_decoration_hover_breeze  #3daee9;
 @define-color theme_button_decoration_focus_breeze  #3daee9;
-@define-color theme_button_foreground_normal_breeze #fefefe;
-@define-color theme_button_foreground_active_breeze #fefefe;
+@define-color theme_button_foreground_normal_breeze #fcfcfc;
+@define-color theme_button_foreground_active_breeze #fcfcfc;
 @define-color theme_button_background_insensitive_breeze        rgba(45, 49, 54, 0.35);
 @define-color theme_button_decoration_hover_insensitive_breeze  rgba(37, 164, 230, 0.35);
 @define-color theme_button_decoration_focus_insensitive_breeze  rgba(37, 164, 230, 0.35);
 @define-color theme_button_foreground_insensitive_breeze        rgba(229, 229, 229, 0.35);
 @define-color theme_button_foreground_active_insensitive_breeze rgba(229, 229, 229, 0.35);
-@define-color theme_button_background_backdrop_breeze        #5f6a8e;
+@define-color theme_button_background_backdrop_breeze        #31363b;
 @define-color theme_button_decoration_hover_backdrop_breeze  #3daee9;
 @define-color theme_button_decoration_focus_backdrop_breeze  #3daee9;
-@define-color theme_button_foreground_backdrop_breeze        #fefefe;
-@define-color theme_button_foreground_active_backdrop_breeze #fefefe;
+@define-color theme_button_foreground_backdrop_breeze        #fcfcfc;
+@define-color theme_button_foreground_active_backdrop_breeze #fcfcfc;
 @define-color theme_button_background_backdrop_insensitive_breeze        rgba(45, 49, 54, 0.35);
 @define-color theme_button_decoration_hover_backdrop_insensitive_breeze  rgba(37, 164, 230, 0.35);
 @define-color theme_button_decoration_focus_backdrop_insensitive_breeze  rgba(37, 164, 230, 0.35);
@@ -128,43 +124,43 @@ widgets main borders color insensitive backdrop */
 @define-color theme_button_foreground_active_backdrop_insensitive_breeze rgba(229, 229, 229, 0.35);
 /*
 these are pretty self explicative */
-@define-color warning_color_breeze #FAEF8C;
-@define-color error_color_breeze   #D8332D;
-@define-color success_color_breeze #50fa7b;
-@define-color warning_color_backdrop_breeze #FAEF8C;
-@define-color error_color_backdrop_breeze   #D8332D;
-@define-color success_color_backdrop_breeze #50fa7b;
+@define-color warning_color_breeze #f67400;
+@define-color error_color_breeze   #da4453;
+@define-color success_color_breeze #27ae60;
+@define-color warning_color_backdrop_breeze #f67400;
+@define-color error_color_backdrop_breeze   #da4453;
+@define-color success_color_backdrop_breeze #27ae60;
 @define-color warning_color_insensitive_breeze rgba(224, 105, 0, 0.35);
 @define-color error_color_insensitive_breeze   rgba(214, 46, 63, 0.35);
 @define-color success_color_insensitive_breeze rgba(35, 158, 87, 0.35);
 @define-color warning_color_insensitive_backdrop_breeze rgba(224, 105, 0, 0.35);
 @define-color error_color_insensitive_backdrop_breeze   rgba(214, 46, 63, 0.35);
 @define-color success_color_insensitive_backdrop_breeze rgba(35, 158, 87, 0.35);
-@define-color link_color_breeze #5f6a8e;
-@define-color link_visited_color_breeze #bd93f9;
+@define-color link_color_breeze #1d99f3;
+@define-color link_visited_color_breeze #9b59b6;
 /*
 *
 * Titlebar Colors
 *
 */
-@define-color theme_titlebar_background_breeze          #5f6a8e;
-@define-color theme_titlebar_foreground_breeze          #fefefe;
-@define-color theme_titlebar_background_light_breeze    #14161b;
+@define-color theme_titlebar_background_breeze          #31363b;
+@define-color theme_titlebar_foreground_breeze          #fcfcfc;
+@define-color theme_titlebar_background_light_breeze    #2a2e32;
 @define-color theme_titlebar_foreground_backdrop_breeze #a1a9b1;
-@define-color theme_titlebar_background_backdrop_breeze #14161b;
+@define-color theme_titlebar_background_backdrop_breeze #2a2e32;
 @define-color theme_titlebar_foreground_insensitive_breeze rgba(229, 229, 229, 0.35);
 @define-color theme_titlebar_foreground_insensitive_backdrop_breeze rgba(144, 154, 163, 0.35);
 /*
 * Tooltips
 */
-@define-color tooltip_text_breeze #fefefe;
-@define-color tooltip_background_breeze #14161b;
+@define-color tooltip_text_breeze #fcfcfc;
+@define-color tooltip_background_breeze #31363b;
 @define-color tooltip_border_breeze #64686b;
 /*
 * Misc
 */
 @define-color print_paper_backdrop_breeze  white;
-@define-color content_view_bg_breeze #15151C;
+@define-color content_view_bg_breeze #1b1e20;
 /*
  * GTK API color re-defs
  */
@@ -197,8 +193,8 @@ button:visited {
   -GtkTextview-error-underline-color: @error_color_breeze;
   -GtkScrolledwindow-scrollbar-spacing: 0;
   -GtkScrolled-window-overlay-scrolling: FALSE;
-  -GtkToolitemgroup-expander-size: 12;
-  -GtkTreeview-expander-size: 12;
+  -GtkToolitemgroup-expander-size: 11;
+  -GtkTreeview-expander-size: 11;
   -GtkTreeview-horizontal-separator: 4;
   -GtkWidget-text-handle-width: 20;
   -GtkWidget-text-handle-height: 20;
@@ -1808,7 +1804,7 @@ headerbar {
       color: @theme_titlebar_foreground_backdrop_breeze; }
   
   headerbar .subtitle {
-    font-size: medium;
+    font-size: smaller;
     padding: 0 12px; }
     
     headerbar .subtitle:backdrop,
@@ -3112,7 +3108,7 @@ notebook > header {
     color: @borders_breeze;
     background-image: none; }
     notebook > header button.flat:active, notebook > header button.flat:hover {
-      color: #D8332D; }
+      color: #da4453; }
 
 notebook > stack:not(:only-child) {
   background-color: transparent;
@@ -3194,7 +3190,7 @@ scrolledwindow undershoot {
  * Progress bars *
  *****************/
 progressbar {
-  font-size: medium;
+  font-size: smaller;
   color: alpha(@theme_button_foreground_normal_breeze,0.3); }
   progressbar.horizontal trough,
   progressbar.horizontal progress {
@@ -3548,13 +3544,13 @@ scrollbar {
   border-style: none;
   background-color: @theme_base_color_breeze; }
   .sidebar:not(separator):dir(ltr), .sidebar:not(separator).left, .sidebar:not(separator).left:dir(rtl) {
-    border-right: 1px solid mix(#14161b,#fefefe,0.07);
+    border-right: 1px solid mix(#2a2e32,#fcfcfc,0.07);
     border-left: none; }
   .sidebar:not(separator):dir(rtl), .sidebar:not(separator).right {
-    border-left: 1px solid mix(#14161b,#fefefe,0.07);
+    border-left: 1px solid mix(#2a2e32,#fcfcfc,0.07);
     border-right: none; }
   .sidebar .sidebar-header > separator {
-    background-color: mix(#14161b,#fefefe,0.07); }
+    background-color: mix(#2a2e32,#fcfcfc,0.07); }
   .sidebar row.activatable {
     border: 0; }
     .sidebar row.activatable:dir(ltr) {
@@ -3777,7 +3773,7 @@ treeview spinbutton:not(.vertical) {
 switch {
   margin: 2px;
   font-weight: bold;
-  font-size: medium;
+  font-size: smaller;
   border: 1px solid;
   border-radius: 12px;
   color: transparent;
@@ -4049,8 +4045,7 @@ window.solid-csd paned.titlebar headerbar {
 
 dialog headerbar.titlebar,
 window headerbar.titlebar {
-  min-height: 46px; 
-}
+  min-height: 46px; }
 
 dialog headerbar.default-decoration button.titlebutton,
 dialog .titlebar.default-decoration button.titlebutton,
@@ -4286,7 +4281,7 @@ viewswitcher {
       viewswitcher button > stack > box label.active {
         font-weight: bold; }
       viewswitcher button > stack > box.narrow {
-        font-size: 1rem;
+        font-size: 0.75rem;
         padding-top: 7px;
         padding-bottom: 5px; }
         viewswitcher button > stack > box.narrow image,
