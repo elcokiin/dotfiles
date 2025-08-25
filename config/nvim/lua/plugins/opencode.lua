@@ -1,3 +1,7 @@
+
+-- Opencode plugin for Neovim
+-- Integrates Opencode AI into Neovim for enhanced development workflows.
+
 return {
   "NickvanDyke/opencode.nvim",
   dependencies = {

@@ -1,4 +1,7 @@
 
+-- Autopairs plugin for Neovim
+-- Automatically closes brackets, quotes, and other paired characters.
+
 return {
   "windwp/nvim-autopairs",
   config = function()

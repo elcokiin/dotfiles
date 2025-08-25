@@ -1,4 +1,7 @@
 
+-- Snacks plugin for Neovim
+-- Provides various utility functions and UI enhancements for Neovim.
+
 return {
   "folke/snacks.nvim",
   opts = {

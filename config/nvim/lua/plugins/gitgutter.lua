@@ -1,4 +1,7 @@
 
+-- GitGutter plugin for Neovim
+-- Shows git diff markers in the sign column.
+
 return {
   "airblade/vim-gitgutter",
   config = function()

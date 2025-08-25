@@ -1,4 +1,7 @@
 
+-- NvimTree plugin for Neovim
+-- A file explorer tree for Neovim.
+
 return {
   "kyazdani42/nvim-tree.lua",
   config = function()

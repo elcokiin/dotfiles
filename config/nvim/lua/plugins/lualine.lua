@@ -1,4 +1,7 @@
 
+-- Lualine plugin for Neovim
+-- A blazing fast and highly customizable status line.
+
 return {
   "nvim-lualine/lualine.nvim",
   requires = { "kyazdani42/nvim-web-devicons" },  -- For the icons 

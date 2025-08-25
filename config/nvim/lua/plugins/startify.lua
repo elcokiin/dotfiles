@@ -9,8 +9,10 @@ return {
     }
 
     vim.g.startify_custom_header = function()
-      return {
-        'Welcome to Neovim!',
+-- Startify plugin for Neovim
+-- A start screen for Neovim with recent files, sessions, and more.
+
+return {        'Welcome to Neovim!',
       }
     end
 

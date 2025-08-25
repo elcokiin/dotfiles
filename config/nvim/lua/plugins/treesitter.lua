@@ -1,7 +1,10 @@
 
+-- Nvim-Treesitter plugin for Neovim
+-- Provides a Tree-sitter integration for Neovim, enabling better syntax highlighting and indentation.
+
 return {
   "nvim-treesitter/nvim-treesitter",
-  build = ":TSUpdate", -- en lazy.nvim se usa "build" en vez de "run"
+  build = ":TSUpdate", 
   config = function()
     require("nvim-treesitter.configs").setup {
       ensure_installed = {

@@ -1,4 +1,7 @@
 
+--- Plugin: nvim-cmp
+-- Description: Autocompletion plugin for Neovim.
+
 return {
   "hrsh7th/nvim-cmp",
   dependencies = {

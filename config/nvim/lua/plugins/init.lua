@@ -4,7 +4,6 @@ return {
   require('plugins.cmp'),
   require('plugins.gitgutter'),
   require('plugins.lualine'),
---  require('plugins.nerdtree'),
 	require("plugins.nvimtree"),
 	require('plugins.opencode'),
 	require('plugins.telescope'),
