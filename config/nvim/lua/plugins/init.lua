@@ -4,6 +4,7 @@ return {
   require('plugins.coc'),
   require('plugins.cmp'),
   require('plugins.gitgutter'),
+  require('plugins.kanagawa'),
   require('plugins.lualine'),
 	require("plugins.nvimtree"),
 	require('plugins.opencode'),
