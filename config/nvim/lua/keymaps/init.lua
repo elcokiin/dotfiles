@@ -1,5 +1,6 @@
 
 require("keymaps.cmp")
+require("keymaps.barbar")
 require("keymaps.nvimtree")
 require("keymaps.opencode")
 require("keymaps.snacks")

@@ -1,5 +1,6 @@
 return {
   require('plugins.autopairs'),
+  require('plugins.barbar'),
   require('plugins.coc'),
   require('plugins.cmp'),
   require('plugins.gitgutter'),
