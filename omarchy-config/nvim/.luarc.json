@@ -1,0 +1,8 @@
+{
+    "diagnostics.disable": [
+        "missing-parameter",
+        "param-type-mismatch",
+        "unused-local",
+        "assign-type-mismatch"
+    ]
+}
