@@ -28,3 +28,16 @@ vim.keymap.set("n", "<leader>r", function()
   vim.cmd("split | term " .. compile_cmd .. " && ./" .. output_path)
   vim.cmd("startinsert")
 end, { desc = "Compile and Run C++" })
+
+-- Move to window using the <Alt> key
+vim.keymap.set("n", "<A-h>", "<C-w>h", { desc = "Go to left window" })
+vim.keymap.set("n", "<A-j>", "<C-w>j", { desc = "Go to lower window" })
+vim.keymap.set("n", "<A-k>", "<C-w>k", { desc = "Go to upper window" })
+vim.keymap.set("n", "<A-l>", "<C-w>l", { desc = "Go to right window" })
+
+-- Safely delete the default LazyVim Ctrl+h/j/k/l mappings
+-- We use `pcall` (protected call) so Neovim doesn't crash if the map doesn't exist
+pcall(vim.keymap.del, "n", "<C-h>")
+pcall(vim.keymap.del, "n", "<C-j>")
+pcall(vim.keymap.del, "n", "<C-k>")
+pcall(vim.keymap.del, "n", "<C-l>")

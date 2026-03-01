@@ -1,1 +1,1 @@
-/home/elcokiin/.config/omarchy/current/theme/neovim.lua
+/home/cokiin/.config/omarchy/current/theme/neovim.lua
