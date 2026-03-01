@@ -1,7 +1,15 @@
 #!/bin/sh
 
-# Define your source (dotfiles) and target (system config) directories
-DOTFILES_DIR="$HOME/Work/dotfiles/omarchy-config/hypr"
+# Check if the user provided the dotfiles path as a parameter
+if [ -z "$1" ]; then
+    echo "❌ Error: Please provide the path to your dotfiles directory."
+    echo "Usage: $0 <path-to-dotfiles>"
+    exit 1
+fi
+
+# Define your source and target directories using the parameter ($1)
+BASE_DIR="$1"
+DOTFILES_DIR="$BASE_DIR/hypr"
 CONFIG_DIR="$HOME/.config/hypr"
 
 echo "Starting Hyprland configuration setup..."

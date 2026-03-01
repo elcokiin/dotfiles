@@ -8,8 +8,8 @@ hide_action_hints = true                                                    # gl
 "default" = { input = " Search...", list = "No Results" } # placeholders for input and empty list, key is the providers name, so f.e. "desktopapplications" or "menus:other"
 
 [keybinds]
-next = ["Down", "ctrl j"]      # Navigate down: Arrow Down OR Ctrl+j (Neovim-style)
-previous = ["Up", "ctrl k"]    # Navigate up: Arrow Up OR Ctrl+k (Neovim-style)
+next = ["Down", "ctrl j"]      # Navigate down: Arrow Down OR Ctrl+j
+previous = ["Up", "ctrl k"]    # Navigate up: Arrow Up OR Ctrl+k
 close = ["Escape", "ctrl c"]
 quick_activate = []
 
