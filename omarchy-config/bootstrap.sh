@@ -50,6 +50,9 @@ echo "🔗 Linking Hypr config..."
 echo "🔗 Linking Walker config..."
 "$SCRIPT_DIR/install-walker.sh" "$SCRIPT_DIR"
 
+echo "🔗 Linking Fcitx5 config..."
+"$SCRIPT_DIR/install-fcitx5.sh" "$SCRIPT_DIR"
+
 if [ "$WITH_BIOMETRICS" -eq 1 ]; then
   echo "🔐 Running biometric setup (opt-in enabled)..."
   if [ -n "${HOWDY_DEVICE_PATH:-}" ]; then
