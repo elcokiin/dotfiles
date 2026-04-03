@@ -1,16 +1,21 @@
 #!/bin/sh
 
-# Check if the user provided the dotfiles path as a parameter
-if [ -z "$1" ]; then
-    echo "❌ Error: Please provide the path to your dotfiles directory."
-    echo "Usage: $0 <path-to-dotfiles>"
-    exit 1
+set -eu
+
+# If no parameter is given, use this script directory as base.
+if [ -n "${1:-}" ]; then
+    BASE_DIR="$1"
+else
+    BASE_DIR="$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)"
 fi
 
-# Define your source and target directories using the parameter ($1)
-BASE_DIR="$1"
 DOTFILES_WALKER="$BASE_DIR/walker"
 TARGET_WALKER="$HOME/.config/walker"
+
+if [ ! -d "$DOTFILES_WALKER" ]; then
+    echo "❌ Error: Walker dotfiles directory not found: $DOTFILES_WALKER"
+    exit 1
+fi
 
 echo "Starting Walker configuration setup..."
 

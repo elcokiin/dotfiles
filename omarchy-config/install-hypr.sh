@@ -1,16 +1,21 @@
 #!/bin/sh
 
-# Check if the user provided the dotfiles path as a parameter
-if [ -z "$1" ]; then
-    echo "❌ Error: Please provide the path to your dotfiles directory."
-    echo "Usage: $0 <path-to-dotfiles>"
-    exit 1
+set -eu
+
+# If no parameter is given, use this script directory as base.
+if [ -n "${1:-}" ]; then
+    BASE_DIR="$1"
+else
+    BASE_DIR="$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)"
 fi
 
-# Define your source and target directories using the parameter ($1)
-BASE_DIR="$1"
 DOTFILES_DIR="$BASE_DIR/hypr"
 CONFIG_DIR="$HOME/.config/hypr"
+
+if [ ! -d "$DOTFILES_DIR" ]; then
+    echo "❌ Error: Hypr dotfiles directory not found: $DOTFILES_DIR"
+    exit 1
+fi
 
 echo "Starting Hyprland configuration setup..."
 
@@ -47,3 +52,15 @@ for src_file in "$DOTFILES_DIR"/*; do
 done
 
 echo "Done! Your Hyprland configs are safely linked."
+
+if [ -f "$DOTFILES_DIR/hyprlock.conf" ]; then
+    target_hyprlock="$CONFIG_DIR/hyprlock.conf"
+    source_hyprlock="$DOTFILES_DIR/hyprlock.conf"
+    if [ -L "$target_hyprlock" ] && [ "$(readlink "$target_hyprlock")" = "$source_hyprlock" ]; then
+        echo "✔️  hyprlock.conf is linked to dotfiles."
+    else
+        echo "⚠️  hyprlock.conf exists but is not linked to dotfiles source."
+    fi
+else
+    echo "⚠️  hyprlock.conf is missing in dotfiles: $DOTFILES_DIR/hyprlock.conf"
+fi

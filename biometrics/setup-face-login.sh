@@ -11,6 +11,40 @@ print_error()   { echo -e "${RED}$1${NC}"; }
 print_info()    { echo -e "${YELLOW}$1${NC}"; }
 
 HYPRLOCK_CONF="$HOME/.config/hypr/hyprlock.conf"
+DEVICE_PATH="${HOWDY_DEVICE_PATH:-}"
+
+usage() {
+  cat <<'EOF'
+Usage: setup-face-login.sh [--device <path>] [--help]
+
+Options:
+  --device <path>   Camera path to use for Howdy (example: /dev/v4l/by-id/...)
+                    You can also set HOWDY_DEVICE_PATH env var.
+  --help            Show this help.
+EOF
+}
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --device)
+      if [[ $# -lt 2 ]]; then
+        print_error "ERROR: --device requires a value"
+        exit 1
+      fi
+      DEVICE_PATH="$2"
+      shift 2
+      ;;
+    -h|--help)
+      usage
+      exit 0
+      ;;
+    *)
+      print_error "ERROR: Unknown argument: $1"
+      usage
+      exit 1
+      ;;
+  esac
+done
 
 # Track files we modify so we can rollback on failure
 PAM_BACKUP_MAP=()   # pairs of "backup:original"
@@ -154,7 +188,11 @@ ls -l /dev/v4l/by-id  2>/dev/null || true
 ls -l /dev/v4l/by-path 2>/dev/null || true
 echo
 
-read -r -p "Enter IR camera path (example: /dev/v4l/by-id/XXX or /dev/video2): " DEVICE_PATH
+if [[ -n "$DEVICE_PATH" ]]; then
+  print_info "Using provided camera path: $DEVICE_PATH"
+else
+  read -r -p "Enter IR camera path (example: /dev/v4l/by-id/XXX or /dev/video2): " DEVICE_PATH
+fi
 if [[ ! -e "$DEVICE_PATH" ]]; then
   print_error "ERROR: device path does not exist: $DEVICE_PATH"
   exit 1
