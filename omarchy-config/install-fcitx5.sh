@@ -11,6 +11,9 @@ fi
 
 DOTFILES_DIR="$BASE_DIR/fcitx5"
 CONFIG_DIR="$HOME/.config/fcitx5"
+CONFIG_CONF_DIR="$CONFIG_DIR/conf"
+THEMES_DOTFILES_DIR="$DOTFILES_DIR/themes"
+THEMES_TARGET_DIR="$HOME/.local/share/fcitx5/themes"
 
 if [ ! -d "$DOTFILES_DIR" ]; then
     echo "❌ Error: Fcitx5 dotfiles directory not found: $DOTFILES_DIR"
@@ -20,7 +23,7 @@ fi
 echo "Starting Fcitx5 configuration setup..."
 
 mkdir -p "$CONFIG_DIR"
-mkdir -p "$CONFIG_DIR/conf"
+mkdir -p "$CONFIG_CONF_DIR"
 
 for src_file in "$DOTFILES_DIR"/*; do
     [ -f "$src_file" ] || continue
@@ -43,23 +46,48 @@ for src_file in "$DOTFILES_DIR"/*; do
 
 done
 
-if [ -f "$DOTFILES_DIR/conf/cached_layouts" ]; then
-    target_cached_layouts="$CONFIG_DIR/conf/cached_layouts"
-    source_cached_layouts="$DOTFILES_DIR/conf/cached_layouts"
+if [ -d "$DOTFILES_DIR/conf" ]; then
+    for src_conf in "$DOTFILES_DIR"/conf/*; do
+        [ -f "$src_conf" ] || continue
 
-    if [ -e "$target_cached_layouts" ] || [ -L "$target_cached_layouts" ]; then
-        if [ "$(readlink "$target_cached_layouts")" = "$source_cached_layouts" ]; then
-            echo "✔️  conf/cached_layouts is already linked correctly."
-        else
-            echo "📦 Backing up existing conf/cached_layouts to cached_layouts.back"
-            mv "$target_cached_layouts" "${target_cached_layouts}.back"
-            echo "🔗 Linking conf/cached_layouts..."
-            ln -sf "$source_cached_layouts" "$target_cached_layouts"
+        conf_name=$(basename "$src_conf")
+        target_conf="$CONFIG_CONF_DIR/$conf_name"
+
+        if [ -e "$target_conf" ] || [ -L "$target_conf" ]; then
+            if [ "$(readlink "$target_conf")" = "$src_conf" ]; then
+                echo "✔️  conf/$conf_name is already linked correctly."
+                continue
+            fi
+            echo "📦 Backing up existing conf/$conf_name to ${conf_name}.back"
+            mv "$target_conf" "${target_conf}.back"
         fi
-    else
-        echo "🔗 Linking conf/cached_layouts..."
-        ln -sf "$source_cached_layouts" "$target_cached_layouts"
-    fi
+
+        echo "🔗 Linking conf/$conf_name..."
+        ln -sf "$src_conf" "$target_conf"
+    done
+fi
+
+if [ -d "$THEMES_DOTFILES_DIR" ]; then
+    mkdir -p "$THEMES_TARGET_DIR"
+
+    for src_theme in "$THEMES_DOTFILES_DIR"/*; do
+        [ -d "$src_theme" ] || continue
+
+        theme_name=$(basename "$src_theme")
+        target_theme="$THEMES_TARGET_DIR/$theme_name"
+
+        if [ -e "$target_theme" ] || [ -L "$target_theme" ]; then
+            if [ "$(readlink "$target_theme")" = "$src_theme" ]; then
+                echo "✔️  theme/$theme_name is already linked correctly."
+                continue
+            fi
+            echo "📦 Backing up existing theme/$theme_name to ${theme_name}.back"
+            mv "$target_theme" "${target_theme}.back"
+        fi
+
+        echo "🔗 Linking theme/$theme_name..."
+        ln -s "$src_theme" "$target_theme"
+    done
 fi
 
 echo "Done! Your Fcitx5 configs are safely linked."
