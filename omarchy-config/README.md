@@ -34,6 +34,30 @@ HOWDY_DEVICE_PATH=/dev/v4l/by-id/your-ir-camera ./omarchy-config/bootstrap.sh --
 
 If `HOWDY_DEVICE_PATH` is not set, camera selection is interactive.
 
+The biometric setup tunes Howdy for faster local authentication by default:
+
+```sh
+HOWDY_PROFILE=fast HOWDY_ENROLL_COUNT=3 ./omarchy-config/bootstrap.sh --with-biometrics
+```
+
+Profiles:
+
+- `fast`: default. Uses the HOG detector, short timeout, MJPEG, 15 FPS, and a more tolerant match threshold.
+- `balanced`: close to Howdy defaults.
+- `secure`: stricter threshold; expect more password fallbacks.
+- `cnn`: more tolerant of pose/angle changes, but slower without a GPU.
+
+For best results, enroll several models in normal real-world conditions: straight at the camera, slight left/right angle, with and without glasses, and both day/night lighting. More models usually reduce false negatives better than a single "perfect" photo.
+
+Advanced overrides are available as env vars:
+
+```sh
+HOWDY_CERTAINTY=4.5 HOWDY_TIMEOUT=2 HOWDY_MAX_HEIGHT=320 HOWDY_ENROLL_COUNT=4 \
+  ./omarchy-config/bootstrap.sh --with-biometrics
+```
+
+Howdy's `certainty` is a threshold from 1 to 10 where higher is more tolerant; values above 5 are not recommended because they increase false-positive risk.
+
 ## Validation
 
 ```sh
