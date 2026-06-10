@@ -21,3 +21,16 @@ api.nvim_create_autocmd({ "UIEnter" }, {
     end
   end,
 })
+
+-- Configuración para effect-tsgo usando bunx
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = { "typescript", "typescriptreact" },
+  callback = function()
+    vim.lsp.start({
+      name = "effect-tsgo",
+      -- Cambiado a bunx para un inicio casi instantáneo
+      cmd = { "bunx", "typescript-language-server", "--stdio" },
+      root_dir = vim.fs.root(0, { "package.json", "tsconfig.json", ".git" }),
+    })
+  end,
+})
