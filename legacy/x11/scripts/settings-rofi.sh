@@ -117,7 +117,7 @@ run_cmd() {
     elif [[ "$1" == '--opt4' ]]; then
         nm-connection-editor
     elif [[ "$1" == '--opt5' ]]; then
-        notify-send -i "/home/elcokiin/Images/icons/calendar.png" "$time" "$date"
+        notify-send "$time" "$date"
     elif [[ "$1" == '--opt6' ]]; then
         amixer set Capture toggle
     fi

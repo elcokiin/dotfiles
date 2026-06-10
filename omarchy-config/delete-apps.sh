@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # Remove unused applications
-# Remember to also delete the Hyprland bindings for the removed apps, or run the stow-hypr.sh script.
+# Remember to also delete the Hyprland bindings for the removed apps.
 
 # Add the exact package names you want to delete here, separated by spaces
 APPS_TO_REMOVE="signal-desktop 1password-beta 1password-cli typora"

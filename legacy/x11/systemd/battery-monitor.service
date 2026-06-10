@@ -1,0 +1,9 @@
+[Unit]
+Description=Legacy X11 low battery monitor
+
+[Service]
+Type=oneshot
+ExecStart=%h/.local/bin/battery-monitor.sh
+
+[Install]
+WantedBy=default.target

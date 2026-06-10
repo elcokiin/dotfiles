@@ -117,10 +117,10 @@ case ${chosen} in
     $option_3)
 		run_cmd --opt3
         ;;
-    $option_4)
-		run_cmd --opt5
-        ;;
-    $option_5)
-		run_cmd --opt6
-        ;;
-esac
+	    $option_4)
+			run_cmd --opt5
+	        ;;
+	    $option_5)
+			run_cmd --opt4
+	        ;;
+	esac
