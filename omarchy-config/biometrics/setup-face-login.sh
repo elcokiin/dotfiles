@@ -206,6 +206,149 @@ if ! [[ "$ENROLL_COUNT" =~ ^[1-9][0-9]*$ ]]; then
   exit 1
 fi
 
+is_video_capture_device() {
+  local dev="$1"
+  v4l2-ctl --device="$dev" --info 2>/dev/null |
+    awk '
+      /Device Caps/ { in_device_caps = 1; next }
+      /^Media Driver Info:/ { in_device_caps = 0 }
+      in_device_caps && /Video Capture/ { found = 1 }
+      END { exit found ? 0 : 1 }
+    '
+}
+
+camera_name() {
+  local dev="$1"
+  v4l2-ctl --device="$dev" --info 2>/dev/null |
+    awk -F: '/Card type/ { sub(/^[ \t]+/, "", $2); print $2; exit }'
+}
+
+stable_path_for_device() {
+  local dev="$1"
+  local resolved
+  resolved="$(readlink -f "$dev")"
+
+  local link
+  for link in /dev/v4l/by-id/* /dev/v4l/by-path/*; do
+    [[ -e "$link" ]] || continue
+    [[ "$(readlink -f "$link")" == "$resolved" ]] || continue
+    printf '%s\n' "$link"
+    return
+  done
+
+  printf '%s\n' "$dev"
+}
+
+camera_score() {
+  local path="$1"
+  local name="$2"
+  local text="${path,,} ${name,,}"
+  local score=0
+
+  [[ "$path" == /dev/v4l/by-id/* ]] && score=$((score + 20))
+  [[ "$path" == /dev/v4l/by-path/* ]] && score=$((score + 10))
+  [[ "$text" == *ir* ]] && score=$((score + 100))
+  [[ "$text" == *infrared* ]] && score=$((score + 100))
+  [[ "$text" == *hello* ]] && score=$((score + 80))
+  [[ "$text" == *face* ]] && score=$((score + 20))
+  [[ "$text" == *index0* ]] && score=$((score + 5))
+
+  printf '%s\n' "$score"
+}
+
+preview_camera_device() {
+  local path="$1"
+  local dev
+  dev="$(readlink -f "$path")"
+
+  echo
+  print_info "Opening camera preview: $path"
+  print_info "Close the preview window to return to camera selection."
+
+  if command -v mpv >/dev/null 2>&1; then
+    mpv --profile=low-latency --untimed --force-window=immediate --title="Howdy camera preview: $path" "av://v4l2:$dev"
+  elif command -v ffplay >/dev/null 2>&1; then
+    ffplay -hide_banner -loglevel warning -f v4l2 -i "$dev"
+  elif command -v qv4l2 >/dev/null 2>&1; then
+    qv4l2 -d "$dev"
+  else
+    print_error "No camera preview app found."
+    print_error "Install one of: mpv, ffmpeg/ffplay, or qv4l2."
+    return 1
+  fi
+}
+
+select_camera_device() {
+  local devices=()
+  local paths=()
+  local names=()
+  local scores=()
+  local dev path name score best_index=0 best_score=-1
+
+  for dev in /dev/video*; do
+    [[ -e "$dev" ]] || continue
+    is_video_capture_device "$dev" || continue
+
+    path="$(stable_path_for_device "$dev")"
+    name="$(camera_name "$dev")"
+    score="$(camera_score "$path" "$name")"
+
+    devices+=("$dev")
+    paths+=("$path")
+    names+=("$name")
+    scores+=("$score")
+
+    if (( score > best_score )); then
+      best_score="$score"
+      best_index="$((${#paths[@]} - 1))"
+    fi
+  done
+
+  if (( ${#paths[@]} == 0 )); then
+    print_error "ERROR: no video capture devices were detected."
+    print_error "Check that your camera is enabled and visible under /dev/video*."
+    exit 1
+  fi
+
+  echo
+  print_info "==> Camera devices detected:"
+  for i in "${!paths[@]}"; do
+    local marker=""
+    if (( i == best_index )); then
+      marker=" (recommended)"
+    fi
+    printf '  %d) %s%s\n' "$((i + 1))" "${paths[$i]}" "$marker"
+    printf '     %s [%s]\n' "${names[$i]:-Unknown camera}" "${devices[$i]}"
+  done
+  echo
+
+  local choice preview_choice selected_index
+  while true; do
+    read -r -p "Select camera [$((best_index + 1))], preview with p or p<N>: " choice
+    choice="${choice:-$((best_index + 1))}"
+
+    if [[ "$choice" =~ ^[Pp]([[:space:]]*([0-9]+))?$ ]]; then
+      preview_choice="${BASH_REMATCH[2]:-$((best_index + 1))}"
+      if (( preview_choice < 1 || preview_choice > ${#paths[@]} )); then
+        print_error "ERROR: invalid preview selection: $preview_choice"
+        continue
+      fi
+      preview_camera_device "${paths[$((preview_choice - 1))]}" || true
+      echo
+      continue
+    fi
+
+    if ! [[ "$choice" =~ ^[0-9]+$ ]] || (( choice < 1 || choice > ${#paths[@]} )); then
+      print_error "ERROR: invalid camera selection: $choice"
+      continue
+    fi
+
+    selected_index="$((choice - 1))"
+    DEVICE_PATH="${paths[$selected_index]}"
+    break
+  done
+}
+
 # Track files we modify so we can rollback on failure
 PAM_BACKUP_MAP=()   # pairs of "backup:original"
 
@@ -339,19 +482,10 @@ sudo pacman -S --needed --noconfirm v4l-utils
 
 # -- 3) Camera selection + pre-validation -------------------------------------
 
-echo
-print_info "==> Camera devices detected:"
-v4l2-ctl --list-devices || true
-echo
-print_info "Tip: prefer a stable path from /dev/v4l/by-id or /dev/v4l/by-path"
-ls -l /dev/v4l/by-id  2>/dev/null || true
-ls -l /dev/v4l/by-path 2>/dev/null || true
-echo
-
 if [[ -n "$DEVICE_PATH" ]]; then
   print_info "Using provided camera path: $DEVICE_PATH"
 else
-  read -r -p "Enter IR camera path (example: /dev/v4l/by-id/XXX or /dev/video2): " DEVICE_PATH
+  select_camera_device
 fi
 if [[ ! -e "$DEVICE_PATH" ]]; then
   print_error "ERROR: device path does not exist: $DEVICE_PATH"

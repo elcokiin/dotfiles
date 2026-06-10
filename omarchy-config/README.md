@@ -33,6 +33,10 @@ HOWDY_DEVICE_PATH=/dev/v4l/by-id/your-ir-camera ./omarchy-config/bootstrap.sh --
 ```
 
 If `HOWDY_DEVICE_PATH` is not set, camera selection is interactive.
+The setup shows only usable video-capture devices, prefers stable `/dev/v4l/by-id`
+or `/dev/v4l/by-path` paths, and marks the likely IR camera as recommended.
+In that selection menu, press `p` to preview the recommended camera or `p1`,
+`p2`, etc. to preview a specific option before selecting it.
 
 The biometric setup tunes Howdy for faster local authentication by default:
 
