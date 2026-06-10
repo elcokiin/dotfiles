@@ -37,11 +37,12 @@ The setup shows only usable video-capture devices, prefers stable `/dev/v4l/by-i
 or `/dev/v4l/by-path` paths, and marks the likely IR camera as recommended.
 In that selection menu, press `p` to preview the recommended camera or `p1`,
 `p2`, etc. to preview a specific option before selecting it.
-During face enrollment, the setup also prompts before each capture: press `p`
-to preview the selected camera, close the preview window, then press `Enter` to
-let Howdy capture that model. Use `HOWDY_ENROLL_PREVIEW=always` to open the
-preview before every capture automatically, or `HOWDY_ENROLL_PREVIEW=never` to
-skip those prompts.
+During face enrollment, the setup asks for the model label before opening the
+camera. Then it prompts before each capture: press `p` to preview the selected
+camera, close the preview window, then press `Enter` to let Howdy capture that
+model immediately without another label prompt. Use
+`HOWDY_ENROLL_PREVIEW=always` to open the preview before every capture
+automatically, or `HOWDY_ENROLL_PREVIEW=never` to skip those prompts.
 
 The biometric setup tunes Howdy for faster local authentication by default:
 

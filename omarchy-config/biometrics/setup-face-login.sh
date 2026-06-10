@@ -334,6 +334,16 @@ preview_before_enrollment() {
   done
 }
 
+read_enrollment_label() {
+  local enrollment_number="$1"
+  local default_label="Omarchy $PROFILE $enrollment_number"
+  local label
+
+  read -r -p "Label for enrollment $enrollment_number [$default_label]: " label
+  label="${label:-$default_label}"
+  MODEL_LABEL="${label:0:24}"
+}
+
 select_camera_device() {
   local devices=()
   local paths=()
@@ -663,8 +673,9 @@ print_info "Add each model under a different normal condition: straight, slight 
 for ((i = 1; i <= ENROLL_COUNT; i++)); do
   echo
   print_info "Enrollment $i of $ENROLL_COUNT"
+  read_enrollment_label "$i"
   preview_before_enrollment "$i"
-  if ! sudo howdy add; then
+  if ! sudo howdy -y add "$MODEL_LABEL"; then
     print_error "\nFace enrollment failed."
     rollback
     exit 1
