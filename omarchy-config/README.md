@@ -37,6 +37,11 @@ The setup shows only usable video-capture devices, prefers stable `/dev/v4l/by-i
 or `/dev/v4l/by-path` paths, and marks the likely IR camera as recommended.
 In that selection menu, press `p` to preview the recommended camera or `p1`,
 `p2`, etc. to preview a specific option before selecting it.
+During face enrollment, the setup also prompts before each capture: press `p`
+to preview the selected camera, close the preview window, then press `Enter` to
+let Howdy capture that model. Use `HOWDY_ENROLL_PREVIEW=always` to open the
+preview before every capture automatically, or `HOWDY_ENROLL_PREVIEW=never` to
+skip those prompts.
 
 The biometric setup tunes Howdy for faster local authentication by default:
 
@@ -61,6 +66,21 @@ HOWDY_CERTAINTY=4.5 HOWDY_TIMEOUT=2 HOWDY_MAX_HEIGHT=320 HOWDY_ENROLL_COUNT=4 \
 ```
 
 Howdy's `certainty` is a threshold from 1 to 10 where higher is more tolerant; values above 5 are not recommended because they increase false-positive risk.
+
+After setup, test the real PAM integration with:
+
+```sh
+sudo -k && sudo -v
+```
+
+Then test the lock screen with `Super + Escape`. Howdy also has a graphical
+`howdy test` window, but the setup skips it by default because Qt/X11 display
+access often fails under `sudo` on Wayland even when face authentication is
+configured correctly. To run it anyway:
+
+```sh
+HOWDY_RUN_TEST=1 ./omarchy-config/bootstrap.sh --with-biometrics
+```
 
 ## Validation
 

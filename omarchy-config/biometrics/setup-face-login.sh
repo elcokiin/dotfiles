@@ -22,6 +22,8 @@ DEVICE_FPS="${HOWDY_DEVICE_FPS:-}"
 FORCE_MJPEG="${HOWDY_FORCE_MJPEG:-}"
 ROTATE="${HOWDY_ROTATE:-}"
 ENROLL_COUNT="${HOWDY_ENROLL_COUNT:-3}"
+RUN_HOWDY_TEST="${HOWDY_RUN_TEST:-0}"
+ENROLL_PREVIEW="${HOWDY_ENROLL_PREVIEW:-prompt}"
 
 usage() {
   cat <<'EOF'
@@ -47,6 +49,11 @@ Options:
   --rotate <0|1|2>  0 landscape, 1 try landscape/portrait, 2 portrait only.
   --enroll-count <n>
                     Number of Howdy face models to add. Default: 3.
+  HOWDY_ENROLL_PREVIEW=prompt|always|never
+                    Preview the selected camera before face enrollment captures.
+                    Default: prompt.
+  HOWDY_RUN_TEST=1  Run Howdy's graphical test window after setup.
+                    Disabled by default because Qt/X11 often fails under sudo on Wayland.
   --help            Show this help.
 EOF
 }
@@ -206,6 +213,21 @@ if ! [[ "$ENROLL_COUNT" =~ ^[1-9][0-9]*$ ]]; then
   exit 1
 fi
 
+case "$ENROLL_PREVIEW" in
+  1|true|yes)
+    ENROLL_PREVIEW="always"
+    ;;
+  0|false|no)
+    ENROLL_PREVIEW="never"
+    ;;
+  prompt|always|never)
+    ;;
+  *)
+    print_error "ERROR: HOWDY_ENROLL_PREVIEW must be prompt, always, or never"
+    exit 1
+    ;;
+esac
+
 is_video_capture_device() {
   local dev="$1"
   v4l2-ctl --device="$dev" --info 2>/dev/null |
@@ -276,6 +298,40 @@ preview_camera_device() {
     print_error "Install one of: mpv, ffmpeg/ffplay, or qv4l2."
     return 1
   fi
+}
+
+preview_before_enrollment() {
+  local enrollment_number="$1"
+  local choice
+
+  case "$ENROLL_PREVIEW" in
+    always)
+      preview_camera_device "$DEVICE_PATH" || true
+      return
+      ;;
+    never)
+      return
+      ;;
+  esac
+
+  while true; do
+    read -r -p "Enrollment $enrollment_number: press p to preview camera, Enter to capture, s to skip previews: " choice
+    case "$choice" in
+      "")
+        return
+        ;;
+      [Pp])
+        preview_camera_device "$DEVICE_PATH" || true
+        ;;
+      [Ss])
+        ENROLL_PREVIEW="never"
+        return
+        ;;
+      *)
+        print_error "ERROR: unknown choice: $choice"
+        ;;
+    esac
+  done
 }
 
 select_camera_device() {
@@ -607,6 +663,7 @@ print_info "Add each model under a different normal condition: straight, slight 
 for ((i = 1; i <= ENROLL_COUNT; i++)); do
   echo
   print_info "Enrollment $i of $ENROLL_COUNT"
+  preview_before_enrollment "$i"
   if ! sudo howdy add; then
     print_error "\nFace enrollment failed."
     rollback
@@ -614,15 +671,23 @@ for ((i = 1; i <= ENROLL_COUNT; i++)); do
   fi
 done
 
-# -- 9) Quick test ------------------------------------------------------------
+# -- 9) Test guidance ---------------------------------------------------------
 
 echo
-print_info "==> Quick test"
-sudo howdy test || true
+if [[ "$RUN_HOWDY_TEST" == "1" ]]; then
+  print_info "==> Graphical Howdy test"
+  if ! sudo howdy test; then
+    print_info "Howdy's graphical test window failed to open."
+    print_info "This usually means sudo/root could not access the desktop display, not that PAM face auth is broken."
+  fi
+else
+  print_info "==> Skipping Howdy graphical test"
+  print_info "Set HOWDY_RUN_TEST=1 if you explicitly want to try the Qt camera test window."
+fi
 
 echo
 print_success "Done!"
-echo "- Test sudo:        sudo -v"
+echo "- Test sudo:        sudo -k && sudo -v"
 echo "- Test lockscreen:  Super + Escape (Omarchy default)"
 echo "- Test polkit:      GUI privilege prompts will try face auth first"
 echo "- If face fails at sudo prompt, use Ctrl+C to fallback to password."
