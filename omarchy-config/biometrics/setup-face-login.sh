@@ -444,13 +444,11 @@ add_hyprlock_face_icon() {
     print_info "WARN: $HYPRLOCK_CONF not found, skipping UI hints"
     return
   fi
-  print_info "Adding face-login hint to hyprlock..."
+  print_info "Enabling biometric auth in hyprlock..."
   # Enable fingerprint/biometric field (used for all biometric auth in hyprlock)
   sed -i 's/fingerprint:enabled = .*/fingerprint:enabled = true/' "$HYPRLOCK_CONF"
-  # Append a camera icon to the placeholder text if not already present
-  if ! grep -q '󰭏' "$HYPRLOCK_CONF"; then
-    sed -i 's/placeholder_text = .*/& 󰭏/' "$HYPRLOCK_CONF"
-  fi
+  # Keep the input placeholder text-only; icon glyphs can render clipped in hyprlock.
+  sed -i 's/placeholder_text = .*/placeholder_text = Enter Password/' "$HYPRLOCK_CONF"
 }
 
 remove_hyprlock_face_icon() {
@@ -461,8 +459,8 @@ remove_hyprlock_face_icon() {
   if ! grep -q 'pam_fprintd.so' /etc/pam.d/hyprlock 2>/dev/null; then
     sed -i 's/fingerprint:enabled = .*/fingerprint:enabled = false/' "$HYPRLOCK_CONF"
   fi
-  # Remove the camera icon we added
-  sed -i 's/ 󰭏//g' "$HYPRLOCK_CONF"
+  # Remove older icon hints from previous versions of the setup.
+  sed -i 's/ 󰭏//g; s/ //g' "$HYPRLOCK_CONF"
 }
 
 # -- PAM helpers --------------------------------------------------------------

@@ -69,8 +69,8 @@ if [[ -f "$HYPRLOCK_CONF" ]]; then
   if ! grep -q 'pam_fprintd.so' /etc/pam.d/hyprlock 2>/dev/null; then
     sed -i 's/fingerprint:enabled = .*/fingerprint:enabled = false/' "$HYPRLOCK_CONF"
   fi
-  # Remove the camera icon
-  sed -i 's/ 󰭏//g' "$HYPRLOCK_CONF"
+  # Remove older icon hints from previous versions of the setup.
+  sed -i 's/ 󰭏//g; s/ //g' "$HYPRLOCK_CONF"
   print_success "Restored hyprlock UI"
 else
   print_info "WARN: $HYPRLOCK_CONF not found, skipping UI cleanup"
