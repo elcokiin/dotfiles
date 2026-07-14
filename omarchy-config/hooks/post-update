@@ -1,0 +1,3 @@
+#!/bin/bash
+# Re-enable biometric auth in hyprlock after omarchy-refresh-hyprlock overwrites it
+sed -i 's/fingerprint:enabled = .*/fingerprint:enabled = true/' ~/.config/hypr/hyprlock.conf

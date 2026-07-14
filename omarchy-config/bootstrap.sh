@@ -65,6 +65,9 @@ echo "🔗 Linking Walker config..."
 echo "🔗 Linking Fcitx5 config..."
 "$SCRIPT_DIR/install-fcitx5.sh" "$SCRIPT_DIR"
 
+echo "🔗 Linking Omarchy hooks..."
+"$SCRIPT_DIR/install-hooks.sh" "$SCRIPT_DIR"
+
 if [ "$WITH_NVIM" -eq 1 ]; then
   echo "🔗 Linking Neovim config..."
   "$SCRIPT_DIR/install-nvim.sh" "$SCRIPT_DIR"
