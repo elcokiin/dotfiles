@@ -1,3 +1,19 @@
 #!/bin/bash
-# Re-enable biometric auth in hyprlock after omarchy-refresh-hyprlock overwrites it
+
+# Re-link hypr configs destroyed by omarchy-refresh-config
+DOTFILES_DIR="$HOME/Work/dotfiles/omarchy-config/hypr"
+CONFIG_DIR="$HOME/.config/hypr"
+
+for src_file in "$DOTFILES_DIR"/*; do
+    [ -f "$src_file" ] || continue
+    filename=$(basename "$src_file")
+    target_file="$CONFIG_DIR/$filename"
+
+    if [ ! -L "$target_file" ] || [ "$(readlink "$target_file")" != "$src_file" ]; then
+        ln -sf "$src_file" "$target_file"
+        echo "Re-linked $filename"
+    fi
+done
+
+# Re-enable biometric auth in hyprlock
 sed -i 's/fingerprint:enabled = .*/fingerprint:enabled = true/' ~/.config/hypr/hyprlock.conf
