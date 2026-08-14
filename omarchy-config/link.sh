@@ -147,6 +147,19 @@ mkdir -p "$TARGET_NVIM"
 )
 echo "✔️  nvim config stowed."
 
+# Point nvim's theme spec at Omarchy's active colorscheme. This link is
+# per-machine runtime state (recomputed on every theme switch), so untracked
+# in git; create/repair it here with an absolute target (relative targets
+# break because ~/.config/nvim/lua is itself a symlink into this repo).
+THEME_LINK="$TARGET_NVIM/lua/plugins/theme.lua"
+THEME_TARGET="$HOME/.local/state/omarchy/current/theme/neovim.lua"
+if [ -f "$THEME_TARGET" ] && [ -L "$THEME_LINK" ] && [ "$(readlink -f "$THEME_LINK")" = "$(readlink -f "$THEME_TARGET")" ]; then
+  echo "✔️  nvim theme link is correct."
+else
+  echo "🔗 Linking nvim theme -> $THEME_TARGET"
+  ln -sfn "$THEME_TARGET" "$THEME_LINK"
+fi
+
 # --- Tmux (opt-in) -----------------------------------------------------------
 if [ "$WITH_TMUX" -eq 1 ]; then
   echo

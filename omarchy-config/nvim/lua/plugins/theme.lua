@@ -1,1 +1,0 @@
-/home/cokiin/.config/omarchy/current/theme/neovim.lua

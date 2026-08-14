@@ -27,6 +27,14 @@ check_link "$HYPR_DOTFILES/monitors.lua" "$HOME/.config/hypr/monitors.lua"
 check_link "$HYPR_DOTFILES/autostart.lua" "$HOME/.config/hypr/autostart.lua"
 check_link "$SCRIPT_DIR/../herdr/config.toml" "$HOME/.config/herdr/config.toml"
 
+THEME_LINK="$HOME/.config/nvim/lua/plugins/theme.lua"
+THEME_TARGET="$HOME/.local/state/omarchy/current/theme/neovim.lua"
+if [ -L "$THEME_LINK" ] && [ "$(readlink -f "$THEME_LINK")" = "$(readlink -f "$THEME_TARGET")" ]; then
+  echo "✅ linked: $THEME_LINK -> omarchy current theme"
+else
+  echo "❌ missing or stale: $THEME_LINK"
+fi
+
 echo
 echo "🔐 Biometrics status"
 echo "--------------------"

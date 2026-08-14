@@ -6,3 +6,7 @@ debug
 foo.*
 *.log
 data
+
+# Omarchy-managed symlink to the active colorscheme (runtime state,
+# recreated by link.sh, rewritten on every theme switch).
+lua/plugins/theme.lua
