@@ -19,6 +19,15 @@ and `herdr/symlink.sh`. `walker/` and `hyprlock.conf` were moved to
 omarchy-menu, omacalc, and the omarchy.clipboard copy-history overlay) and the
 lock is now the Quickshell `omarchy.lock` overlay.
 
+## Non-Omarchy configs used here
+
+These are not Omarchy configs, so they live at the repo root (see
+`AGENTS.md`), but they are active on this setup:
+
+- `keyd/` — system-wide input remapping (AltGr + HJKL -> arrow keys) so Vim
+  keys work in every app, terminal and TTY. Install with:
+  `sudo ./keyd/install.sh`.
+
 ## Usage
 
 Run the full link setup (everything except opt-in modules):
