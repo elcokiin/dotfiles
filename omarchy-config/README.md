@@ -1,35 +1,42 @@
-# Omarchy config bootstrap
+# Omarchy config links
 
-This folder is split by responsibility:
+This folder contains the customized Omarchy configs and a single script that
+symlinks them all into place:
 
-- `install-hypr.sh`: links only Hypr config files into `~/.config/hypr`.
-- `install-walker.sh`: links walker config into `~/.config/walker`.
-- `install-fcitx5.sh`: links Fcitx5 keyboard/input-method config.
-- `install-nvim.sh`: optionally links the Omarchy LazyVim config.
-- `install-tmux.sh`: optionally links the Omarchy tmux config.
-- `bootstrap.sh`: orchestrates base setup and optional modules.
+- `link.sh`: the one global link script. Symlinks `hypr/` (quattro-style `.lua`
+  overrides: input, bindings, monitors, autostart), `fcitx5/`, `hooks/`,
+  `herdr/`, and `nvim/` (via stow) by default; `--with-tmux` also links
+  `tmux-before-native/`, and `--with-biometrics` runs face-auth setup.
 - `doctor.sh`: verifies links and biometric status.
+- `delete-apps.sh`: helper to remove stock apps.
 - `biometrics/setup-face-login.sh`: system-level face auth setup (opt-in).
 - `biometrics/remove-face-login.sh`: removes the face-auth PAM integration.
 
+Superseded by `link.sh` and removed: `bootstrap.sh`, `install-hypr.sh`,
+`install-fcitx5.sh`, `install-hooks.sh`, `install-tmux.sh`, `install-nvim.sh`,
+and `herdr/symlink.sh`. `walker/` and `hyprlock.conf` were moved to
+`legacy/omarchy/` — walker is no longer used by Omarchy (replaced by
+omarchy-menu, omacalc, and the omarchy.clipboard copy-history overlay) and the
+lock is now the Quickshell `omarchy.lock` overlay.
+
 ## Usage
 
-Run base setup (no root-level biometric changes):
+Run the full link setup (everything except opt-in modules):
 
 ```sh
-./omarchy-config/bootstrap.sh
+./omarchy-config/link.sh
 ```
 
-Run base setup with optional editor/tmux config:
+Add optional modules:
 
 ```sh
-./omarchy-config/bootstrap.sh --with-nvim --with-tmux
+./omarchy-config/link.sh --with-tmux --with-biometrics
 ```
 
-Run base setup + biometrics (opt-in):
+Biometrics (opt-in):
 
 ```sh
-HOWDY_DEVICE_PATH=/dev/v4l/by-id/your-ir-camera ./omarchy-config/bootstrap.sh --with-biometrics
+HOWDY_DEVICE_PATH=/dev/v4l/by-id/your-ir-camera ./omarchy-config/link.sh --with-biometrics
 ```
 
 If `HOWDY_DEVICE_PATH` is not set, camera selection is interactive.
@@ -47,7 +54,7 @@ automatically, or `HOWDY_ENROLL_PREVIEW=never` to skip those prompts.
 The biometric setup tunes Howdy for faster local authentication by default:
 
 ```sh
-HOWDY_PROFILE=fast HOWDY_ENROLL_COUNT=3 ./omarchy-config/bootstrap.sh --with-biometrics
+HOWDY_PROFILE=fast HOWDY_ENROLL_COUNT=3 ./omarchy-config/link.sh --with-biometrics
 ```
 
 Profiles:
@@ -63,7 +70,7 @@ Advanced overrides are available as env vars:
 
 ```sh
 HOWDY_CERTAINTY=4.5 HOWDY_TIMEOUT=2 HOWDY_MAX_HEIGHT=320 HOWDY_ENROLL_COUNT=4 \
-  ./omarchy-config/bootstrap.sh --with-biometrics
+  ./omarchy-config/link.sh --with-biometrics
 ```
 
 Howdy's `certainty` is a threshold from 1 to 10 where higher is more tolerant; values above 5 are not recommended because they increase false-positive risk.
@@ -80,7 +87,7 @@ access often fails under `sudo` on Wayland even when face authentication is
 configured correctly. To run it anyway:
 
 ```sh
-HOWDY_RUN_TEST=1 ./omarchy-config/bootstrap.sh --with-biometrics
+HOWDY_RUN_TEST=1 ./omarchy-config/link.sh --with-biometrics
 ```
 
 ## Validation
@@ -99,7 +106,7 @@ This checks:
 ## Replication on another PC
 
 1. Clone this repository.
-2. Run `./omarchy-config/bootstrap.sh`.
-3. Optionally run `./omarchy-config/bootstrap.sh --with-nvim --with-tmux`.
-4. Optionally run `./omarchy-config/bootstrap.sh --with-biometrics`.
+2. Run `./omarchy-config/link.sh`.
+3. Optionally run `./omarchy-config/link.sh --with-tmux`.
+4. Optionally run `./omarchy-config/link.sh --with-biometrics`.
 5. Run `./omarchy-config/doctor.sh`.

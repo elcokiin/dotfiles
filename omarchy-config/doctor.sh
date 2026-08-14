@@ -21,24 +21,11 @@ check_link() {
 echo "🩺 Omarchy dotfiles doctor"
 echo "=========================="
 
-check_link "$HYPR_DOTFILES/bindings.conf" "$HOME/.config/hypr/bindings.conf"
-check_link "$HYPR_DOTFILES/hypridle.conf" "$HOME/.config/hypr/hypridle.conf"
-check_link "$HYPR_DOTFILES/input.conf" "$HOME/.config/hypr/input.conf"
-check_link "$HYPR_DOTFILES/monitors.conf" "$HOME/.config/hypr/monitors.conf"
-
-if [ -f "$HYPR_DOTFILES/hyprlock.conf" ]; then
-  check_link "$HYPR_DOTFILES/hyprlock.conf" "$HOME/.config/hypr/hyprlock.conf"
-else
-  echo "⚠️  dotfiles hyprlock.conf not found: $HYPR_DOTFILES/hyprlock.conf"
-fi
-
-if [ -L "$HOME/.config/walker" ] && [ "$(readlink -f "$HOME/.config/walker")" = "$(readlink -f "$SCRIPT_DIR/walker")" ]; then
-  echo "✅ linked: $HOME/.config/walker -> $SCRIPT_DIR/walker"
-elif [ -e "$HOME/.config/walker" ] || [ -L "$HOME/.config/walker" ]; then
-  echo "⚠️  exists but not linked as expected: $HOME/.config/walker"
-else
-  echo "❌ missing: $HOME/.config/walker"
-fi
+check_link "$HYPR_DOTFILES/bindings.lua" "$HOME/.config/hypr/bindings.lua"
+check_link "$HYPR_DOTFILES/input.lua" "$HOME/.config/hypr/input.lua"
+check_link "$HYPR_DOTFILES/monitors.lua" "$HOME/.config/hypr/monitors.lua"
+check_link "$HYPR_DOTFILES/autostart.lua" "$HOME/.config/hypr/autostart.lua"
+check_link "$SCRIPT_DIR/../herdr/config.toml" "$HOME/.config/herdr/config.toml"
 
 echo
 echo "🔐 Biometrics status"
@@ -59,12 +46,6 @@ if [ -f /etc/pam.d/polkit-1 ] && grep -q '^auth sufficient pam_howdy.so$' /etc/p
   echo "✅ /etc/pam.d/polkit-1 has pam_howdy"
 else
   echo "⚠️  /etc/pam.d/polkit-1 missing pam_howdy"
-fi
-
-if [ -f "$HOME/.config/hypr/hyprlock.conf" ] && grep -q 'fingerprint:enabled = true' "$HOME/.config/hypr/hyprlock.conf"; then
-  echo "✅ hyprlock biometric UI enabled"
-else
-  echo "⚠️  hyprlock biometric UI not enabled"
 fi
 
 echo

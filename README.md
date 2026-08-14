@@ -7,14 +7,14 @@ This repository is organized around Omarchy as the primary desktop setup.
 Use `omarchy-config/` for the active system:
 
 ```sh
-./omarchy-config/bootstrap.sh
+./omarchy-config/link.sh
 ```
 
 Optional modules are explicit:
 
 ```sh
-./omarchy-config/bootstrap.sh --with-nvim --with-tmux
-HOWDY_DEVICE_PATH=/dev/v4l/by-id/your-ir-camera ./omarchy-config/bootstrap.sh --with-biometrics
+./omarchy-config/link.sh --with-tmux
+HOWDY_DEVICE_PATH=/dev/v4l/by-id/your-ir-camera ./omarchy-config/link.sh --with-biometrics
 ./omarchy-config/doctor.sh
 ```
 
