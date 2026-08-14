@@ -28,6 +28,11 @@ settings silently broke after the upgrade.
 - No language-toggle binding. Language switch stays on fcitx5's own
   `Ctrl+Space`.
 
+### looknfeel.lua
+- `general.layout = "scrolling"` — use scrolling layout as default instead of
+  dwindle. The scrolling layout is configured with `column_width = 0.49` in
+  Omarchy's defaults.
+
 ### bindings.lua
 Keep **mine**:
 | Key | Action |

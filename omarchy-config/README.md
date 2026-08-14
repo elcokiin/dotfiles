@@ -4,7 +4,7 @@ This folder contains the customized Omarchy configs and a single script that
 symlinks them all into place:
 
 - `link.sh`: the one global link script. Symlinks `hypr/` (quattro-style `.lua`
-  overrides: input, bindings, monitors, autostart), `fcitx5/`, `hooks/`,
+  overrides: input, bindings, monitors, looknfeel, autostart), `fcitx5/`, `hooks/`,
   `herdr/`, and `nvim/` (via stow) by default; `--with-tmux` also links
   `tmux-before-native/`, and `--with-biometrics` runs face-auth setup.
 - `doctor.sh`: verifies links and biometric status.
