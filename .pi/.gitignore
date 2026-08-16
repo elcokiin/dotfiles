@@ -1,0 +1,4 @@
+# pi owns this file at runtime (provider/model/theme state, lastChangelogVersion).
+# Keeping it gitignored means settings stay machine-local — only sync themes/
+# and extensions/ via dotfiles.
+agent/settings.json
