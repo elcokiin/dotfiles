@@ -22,11 +22,7 @@ lock is now the Quickshell `omarchy.lock` overlay.
 ## Non-Omarchy configs used here
 
 These are not Omarchy configs, so they live at the repo root (see
-`AGENTS.md`), but they are active on this setup:
-
-- `keyd/` — system-wide input remapping (AltGr + HJKL -> arrow keys) so Vim
-  keys work in every app, terminal and TTY. Lives in `.config/keyd/`. Install
-  with: `sudo ./.config/keyd/install.sh`.
+`AGENTS.md`), but they are active on this setup
 
 ## Usage
 
