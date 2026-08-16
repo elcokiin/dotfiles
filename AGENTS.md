@@ -4,12 +4,16 @@
 
 - Anything that is not explicitly Omarchy, or does not ship built-in with
   Omarchy, must NOT be placed directly inside the `omarchy-config/` folder.
-- Instead, keep it at the repo root in its own folder (e.g. `keyd/`, `herdr/`).
+- Instead, keep it at the repo root in its own folder (e.g. `.config/herdr/`,
+  `.config/keyd/`).
 - If the tool is actually used on this Omarchy setup, document that in
   `omarchy-config/README.md`: note that it is used, where it lives, and how to
   install/enable it. Do not drop the files into `omarchy-config/` itself.
 - `omarchy-config/` is reserved for configs deployed by `omarchy-config/link.sh`
   into `~/.config` (plus its opt-in modules and helpers).
+- `.config/` at the repo root is for non-Omarchy tools' configs (e.g. herdr,
+  keyd); link.sh deploys `.config/herdr/` into `~/.config/herdr/`, and keyd is
+  installed with `sudo ./.config/keyd/install.sh`.
 
 ## Custom modifications workflow
 

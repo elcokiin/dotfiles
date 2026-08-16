@@ -23,9 +23,9 @@ HOWDY_DEVICE_PATH=/dev/v4l/by-id/your-ir-camera ./omarchy-config/link.sh --with-
 Non-Omarchy tools (or configs that need root) live in the repo root, not in
 `omarchy-config/`, but are documented there since they run on Omarchy:
 
-- `keyd/` — system-wide input remapping (AltGr + HJKL -> arrow keys).
-  Install with `sudo ./keyd/install.sh`.
-- `herdr/` — herdr terminal multiplexer config; linked by `link.sh`.
+- `.config/keyd/` — system-wide input remapping (AltGr + HJKL -> arrow keys).
+  Install with `sudo ./.config/keyd/install.sh`.
+- `.config/herdr/` — herdr terminal multiplexer config; linked by `link.sh`.
 
 ## Legacy: X11/bspwm
 

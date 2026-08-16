@@ -17,7 +17,7 @@ Linked by default:
   - hypr/*        -> ~/.config/hypr
   - fcitx5/*      -> ~/.config/fcitx5  (+ conf/*, themes -> ~/.local/share/fcitx5/themes)
   - hooks/*       -> ~/.config/omarchy/hooks
-  - herdr/config.toml -> ~/.config/herdr
+  - .config/herdr/config.toml -> ~/.config/herdr
   - nvim/         -> ~/.config/nvim (via stow)
 
 Options:
@@ -128,7 +128,7 @@ done
 # --- Herdr -------------------------------------------------------------------
 echo
 echo "● Herdr"
-link "$SCRIPT_DIR/../herdr/config.toml" "$HOME/.config/herdr/config.toml"
+link "$SCRIPT_DIR/../.config/herdr/config.toml" "$HOME/.config/herdr/config.toml"
 
 # --- Neovim (default, via stow) ----------------------------------------------
 echo

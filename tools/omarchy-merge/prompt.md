@@ -17,7 +17,7 @@ in this phase — symlinks happen later in a separate step.
 
 - **REPO-ONLY.** Never edit or create anything under `~/.config`, `~/.local`,
   or any path outside this repository in this phase. All output is written into
-  this repo (e.g. `omarchy-config/`, `herdr/`).
+  this repo (e.g. `omarchy-config/`, `.config/herdr/`).
 - **OMARCHY READ-ONLY.** `/usr/share/omarchy` (and `$OMARCHY_PATH`) is
   read-only. Reading defaults from there is encouraged; modifying it is
   forbidden.
@@ -29,7 +29,7 @@ in this phase — symlinks happen later in a separate step.
 ## Inputs
 
 - My custom dotfiles in this repo: `omarchy-config/` (hypr, nvim, fcitx5) and
-  `herdr/`.
+  `.config/herdr/`.
 - Omarchy defaults: `$OMARCHY_PATH` (default `/usr/share/omarchy`) plus any
   live `~/.config/*` files as read-only reference for comparison.
 - `tools/omarchy-merge/decisions.md` — decisions I already resolved for this
@@ -47,7 +47,7 @@ For each component in scope:
 1. **INVENTORY.** List my custom files and the matching Omarchy default files.
    - hypr: compare `omarchy-config/hypr/*` against
      `/usr/share/omarchy/default/hypr/*.lua` (and `/usr/share/omarchy/config`).
-   - herdr: `herdr/config.toml` against herdr's shipped defaults.
+   - herdr: `.config/herdr/config.toml` against herdr's shipped defaults.
    - nvim: `omarchy-config/nvim/` against Omarchy's nvim default (if any) and
      against what the live `~/.config/nvim` currently has.
 
@@ -69,7 +69,8 @@ For each component in scope:
 5. **WRITE** the merged file in the repo, custom winning unless I said
    otherwise. Keep the exact filename/structure the live config expects for
    this release (hypr: `input.lua`, `bindings.lua`, `autostart.lua`,
-   `monitors.lua`, `looknfeel.lua`; herdr: `config.toml`; nvim: LazyVim layout).
+   `monitors.lua`, `looknfeel.lua`; herdr: `.config/herdr/config.toml`; nvim:
+   LazyVim layout).
 
 6. **SUMMARY + GATE.** After each component print a table:
 

@@ -3,7 +3,7 @@
 # Install keyd system-wide: links this repo's default.conf into /etc/keyd
 # and enables the keyd daemon.
 #
-# Run with sudo:  sudo ./keyd/install.sh
+# Run with sudo:  sudo .config/keyd/install.sh
 
 set -eu
 
