@@ -18,6 +18,8 @@ Linked by default:
   - fcitx5/*      -> ~/.config/fcitx5  (+ conf/*, themes -> ~/.local/share/fcitx5/themes)
   - hooks/*       -> ~/.config/omarchy/hooks
   - .config/herdr/config.toml -> ~/.config/herdr
+  - .agents/      -> ~/.agents (agent skills, incl. the omarchy skill)
+  - /etc/keyd (system-wide; link.sh opens a terminal to run .config/keyd/install.sh)
   - nvim/         -> ~/.config/nvim (via stow)
 
 Options:
@@ -33,23 +35,23 @@ EOF
 
 while [ "$#" -gt 0 ]; do
   case "$1" in
-    --with-tmux)
-      WITH_TMUX=1
-      shift
-      ;;
-    --with-biometrics)
-      WITH_BIOMETRICS=1
-      shift
-      ;;
-    -h|--help)
-      usage
-      exit 0
-      ;;
-    *)
-      echo "❌ Error: Unknown argument: $1"
-      usage
-      exit 1
-      ;;
+  --with-tmux)
+    WITH_TMUX=1
+    shift
+    ;;
+  --with-biometrics)
+    WITH_BIOMETRICS=1
+    shift
+    ;;
+  -h | --help)
+    usage
+    exit 0
+    ;;
+  *)
+    echo "❌ Error: Unknown argument: $1"
+    usage
+    exit 1
+    ;;
   esac
 done
 
@@ -94,7 +96,7 @@ echo "● Hypr"
 for src_file in "$SCRIPT_DIR"/hypr/*; do
   [ -f "$src_file" ] || continue
   case "$src_file" in
-    *.back) continue ;;
+  *.back) continue ;;
   esac
   link "$src_file" "$HOME/.config/hypr/$(basename "$src_file")"
 done
@@ -129,6 +131,43 @@ done
 echo
 echo "● Herdr"
 link "$SCRIPT_DIR/../.config/herdr/config.toml" "$HOME/.config/herdr/config.toml"
+
+# --- Agent skills (.agents) --------------------------------------------------
+# The repo keeps its agent skills (incl. the omarchy skill) under .agents/;
+# link the whole directory into ~/.agents so agent tooling picks them up.
+# Any existing ~/.agents is backed up by the link helper first.
+echo
+echo "● Agent skills"
+link "$SCRIPT_DIR/../.agents" "$HOME/.agents"
+
+# --- Keyd (system-wide, default) ---------------------------------------------
+# keyd talks directly with the kernel, so its config must live in /etc/keyd,
+# not ~/.config. Linking needs root and an interactive TTY for the sudo
+# prompt, so open a fresh terminal in the foreground that runs the installer
+# (which auto-elevates with sudo) instead of relying on this script's context.
+echo
+echo "● Keyd"
+KEYD_CONF="$SCRIPT_DIR/../.config/keyd/default.conf"
+KEYD_TARGET="/etc/keyd/default.conf"
+KEYD_INSTALL="$SCRIPT_DIR/../.config/keyd/install.sh"
+if [ -L "$KEYD_TARGET" ] && [ "$(readlink -f "$KEYD_TARGET")" = "$(readlink -f "$KEYD_CONF")" ]; then
+  echo "✔️  /etc/keyd/default.conf is already linked correctly."
+elif command -v keyd >/dev/null 2>&1; then
+  echo "🔑 Opening a terminal to run the keyd installer (needs sudo)..."
+  if command -v xdg-terminal-exec >/dev/null 2>&1; then
+    xdg-terminal-exec --hold -- "$KEYD_INSTALL"
+  else
+    # Fallback: any common terminal emulator that supports --hold.
+    for term in kitty alacritty ghostty foot; do
+      if command -v "$term" >/dev/null 2>&1; then
+        "$term" --hold sh "$KEYD_INSTALL"
+        break
+      fi
+    done
+  fi
+else
+  echo "⏭️  keyd is not installed; skipping (install it with: omarchy-pkg-add keyd)."
+fi
 
 # --- Neovim (default, via stow) ----------------------------------------------
 echo

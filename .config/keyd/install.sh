@@ -3,7 +3,9 @@
 # Install keyd system-wide: links this repo's default.conf into /etc/keyd
 # and enables the keyd daemon.
 #
-# Run with sudo:  sudo .config/keyd/install.sh
+# Run it directly and it auto-elevates with sudo when needed:
+#   .config/keyd/install.sh
+# (or explicitly: sudo .config/keyd/install.sh)
 
 set -eu
 
@@ -11,15 +13,14 @@ SCRIPT_DIR="$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)"
 CONF_SOURCE="$SCRIPT_DIR/default.conf"
 CONF_TARGET="/etc/keyd/default.conf"
 
-if [ "$(id -u)" -ne 0 ]; then
-  echo "❌ Error: this script requires root. Run it with sudo."
-  echo "   sudo $0"
-  exit 1
-fi
-
 if ! command -v keyd >/dev/null 2>&1; then
   echo "❌ Error: keyd is not installed. Install it first (omarchy-pkg-add keyd)."
   exit 1
+fi
+
+if [ "$(id -u)" -ne 0 ]; then
+  echo "🔑 Elevating with sudo (needed to write /etc/keyd and start the daemon)..."
+  exec sudo "$0" "$@"
 fi
 
 mkdir -p /etc/keyd
@@ -44,4 +45,13 @@ cat <<'EOF'
 Next steps:
   sudo keyd monitor   # see what keyd receives while typing
   sudo keyd check     # inspect the parsed config
+  sudo keyd reload    # when u modify the default.conf reload the config with this
 EOF
+
+# When launched from a terminal (e.g. via link.sh), keep the window open so
+# the result stays readable. No-op when stdin is not a TTY.
+if [ -t 0 ]; then
+  echo
+  printf 'Press Enter to close this window... '
+  read -r _
+fi

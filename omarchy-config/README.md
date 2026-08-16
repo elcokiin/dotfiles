@@ -5,7 +5,7 @@ symlinks them all into place:
 
 - `link.sh`: the one global link script. Symlinks `hypr/` (quattro-style `.lua`
   overrides: input, bindings, monitors, looknfeel, autostart), `fcitx5/`, `hooks/`,
-  `.config/herdr/` (config.toml), and `nvim/` (via stow) by default; `--with-tmux` also links
+  `.config/herdr/` (config.toml), `.config/keyd/` (default.conf -> `/etc/keyd`), and `nvim/` (via stow) by default; `--with-tmux` also links
   `tmux-before-native/`, and `--with-biometrics` runs face-auth setup.
 - `doctor.sh`: verifies links and biometric status.
 - `delete-apps.sh`: helper to remove stock apps.
@@ -22,7 +22,14 @@ lock is now the Quickshell `omarchy.lock` overlay.
 ## Non-Omarchy configs used here
 
 These are not Omarchy configs, so they live at the repo root (see
-`AGENTS.md`), but they are active on this setup
+`AGENTS.md`), but they are active on this setup:
+
+- `.config/herdr/` — Herdr terminal-multiplexer config, linked by `link.sh`.
+- `.config/keyd/` — keyd input remapping (`default.conf`). keyd talks directly
+  with the kernel, so the config must live in `/etc/keyd`, not `~/.config`.
+  `link.sh` links it there by default: it opens a terminal in the foreground
+  running `.config/keyd/install.sh`, which auto-elevates with sudo, links the
+  config, and enables the keyd daemon.
 
 ## Usage
 

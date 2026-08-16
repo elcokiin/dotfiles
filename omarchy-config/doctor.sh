@@ -26,6 +26,8 @@ check_link "$HYPR_DOTFILES/input.lua" "$HOME/.config/hypr/input.lua"
 check_link "$HYPR_DOTFILES/monitors.lua" "$HOME/.config/hypr/monitors.lua"
 check_link "$HYPR_DOTFILES/autostart.lua" "$HOME/.config/hypr/autostart.lua"
 check_link "$SCRIPT_DIR/../.config/herdr/config.toml" "$HOME/.config/herdr/config.toml"
+check_link "$SCRIPT_DIR/../.config/keyd/default.conf" "/etc/keyd/default.conf"
+check_link "$SCRIPT_DIR/../.agents" "$HOME/.agents"
 
 THEME_LINK="$HOME/.config/nvim/lua/plugins/theme.lua"
 THEME_TARGET="$HOME/.local/state/omarchy/current/theme/neovim.lua"
