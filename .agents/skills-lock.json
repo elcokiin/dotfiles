@@ -1,17 +1,104 @@
 {
   "version": 3,
   "skills": {
-    "omarchy": {
-      "source": "basecamp/omarchy",
+    "herdr": {
+      "source": "herdrdev/herdr",
       "sourceType": "github",
-      "skillPath": "default/agents/skills/omarchy/SKILL.md",
-      "computedHash": "5bee2ad5227f457ffb44571da350bf60b02fd8c2224c96732af090ba65a87b5a"
+      "sourceUrl": "https://github.com/herdrdev/herdr.git",
+      "skillPath": "skills/herdr/SKILL.md",
+      "skillFolderHash": "4821f1d39ccae24b9b274b03184edaaf198a3994",
+      "installedAt": "2026-07-31T17:34:07.237Z",
+      "updatedAt": "2026-07-31T17:34:07.237Z"
     },
-    "show-me": {
-      "source": "humanlayer/skills",
+    "grill-me": {
+      "source": "mattpocock/skills",
       "sourceType": "github",
-      "skillPath": "plugins/show-me/skills/show-me/SKILL.md",
-      "computedHash": "de32a72f802801f08a84641b467f2c6306d35a58ce5e59ea607ac3a993a18c91"
+      "sourceUrl": "https://github.com/mattpocock/skills.git",
+      "skillPath": "skills/productivity/grill-me/SKILL.md",
+      "skillFolderHash": "3df14e2d3a89459bf300614be9247e3ce74798f8",
+      "pluginName": "mattpocock-skills",
+      "installedAt": "2026-08-16T23:30:58.073Z",
+      "updatedAt": "2026-08-16T23:30:58.073Z"
+    },
+    "grilling": {
+      "source": "mattpocock/skills",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/mattpocock/skills.git",
+      "skillPath": "skills/productivity/grilling/SKILL.md",
+      "skillFolderHash": "0d40d978f1a588971a11ea7ae85b208e78102dc3",
+      "pluginName": "mattpocock-skills",
+      "installedAt": "2026-08-16T23:37:56.521Z",
+      "updatedAt": "2026-08-16T23:37:56.521Z"
+    },
+    "grill-with-docs": {
+      "source": "mattpocock/skills",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/mattpocock/skills.git",
+      "skillPath": "skills/engineering/grill-with-docs/SKILL.md",
+      "skillFolderHash": "eedaf2562c83155115e9c649fa3ecaac2e10e81d",
+      "pluginName": "mattpocock-skills",
+      "installedAt": "2026-08-17T06:20:31.070Z",
+      "updatedAt": "2026-08-17T06:20:31.070Z"
+    },
+    "domain-modeling": {
+      "source": "mattpocock/skills",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/mattpocock/skills.git",
+      "skillPath": "skills/engineering/domain-modeling/SKILL.md",
+      "skillFolderHash": "05c3244ec75b7548bbc2b635b0624bb9f70369c3",
+      "pluginName": "mattpocock-skills",
+      "installedAt": "2026-08-17T06:20:31.075Z",
+      "updatedAt": "2026-08-17T06:20:31.075Z"
+    },
+    "wait-what": {
+      "source": "mattpocock/skills",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/mattpocock/skills.git",
+      "skillPath": "skills/productivity/wait-what/SKILL.md",
+      "skillFolderHash": "6abe708f1bf253158a037ac49faea2944e2809dc",
+      "pluginName": "mattpocock-skills",
+      "installedAt": "2026-08-17T06:20:31.079Z",
+      "updatedAt": "2026-08-17T06:20:31.079Z"
+    },
+    "teach": {
+      "source": "mattpocock/skills",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/mattpocock/skills.git",
+      "skillPath": "skills/productivity/teach/SKILL.md",
+      "skillFolderHash": "15f8c86d39ef834e643d092733ca899b59049067",
+      "pluginName": "mattpocock-skills",
+      "installedAt": "2026-08-17T17:07:15.127Z",
+      "updatedAt": "2026-08-17T17:07:15.127Z"
+    },
+    "tdd": {
+      "source": "mattpocock/skills",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/mattpocock/skills.git",
+      "skillPath": "skills/engineering/tdd/SKILL.md",
+      "skillFolderHash": "8c098cfbaf956292d413d1140f5ee68f70dcc9ee",
+      "pluginName": "mattpocock-skills",
+      "installedAt": "2026-08-17T17:07:15.132Z",
+      "updatedAt": "2026-08-17T17:07:15.132Z"
     }
-  }
+  },
+  "dismissed": {
+    "findSkillsPrompt": true
+  },
+  "lastSelectedAgents": [
+    "amp",
+    "antigravity",
+    "antigravity-cli",
+    "cline",
+    "codex",
+    "cursor",
+    "deepagents",
+    "gemini-cli",
+    "github-copilot",
+    "kimi-code-cli",
+    "opencode",
+    "warp",
+    "zed",
+    "pi",
+    "claude-code"
+  ]
 }
