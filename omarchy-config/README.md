@@ -19,6 +19,18 @@ and `herdr/symlink.sh`. `walker/` and `hyprlock.conf` were moved to
 omarchy-menu, omacalc, and the omarchy.clipboard copy-history overlay) and the
 lock is now the Quickshell `omarchy.lock` overlay.
 
+## Windows VM (omarchy-windows-vm)
+
+The `windows-vm/` folder contains fixes and documentation for common `omarchy-windows-vm` issues:
+
+- `setup-permissions.sh`: Fixes ownership and permission issues on `~/.windows` and `~/Windows`
+- `LEARNINGS.md`: Documents issues found (missing polkit agent, setgid bit, ownership)
+
+**Quick fix after fresh install:**
+```sh
+./omarchy-config/windows-vm/setup-permissions.sh
+```
+
 ## Non-Omarchy configs used here
 
 These are not Omarchy configs, so they live at the repo root (see
