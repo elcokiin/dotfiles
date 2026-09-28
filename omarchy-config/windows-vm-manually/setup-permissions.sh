@@ -1,4 +1,5 @@
 #!/bin/bash
+# THIS IS A LEGACY FILE
 # Fix common permission issues with omarchy-windows-vm
 # Run this after fresh install or if launch fails silently
 

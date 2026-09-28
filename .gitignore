@@ -23,3 +23,7 @@ luac.out
 *.lo
 *.def
 *.exp
+
+# omarchy config windows
+windows/
+shared/
