@@ -42,6 +42,16 @@ These are not Omarchy configs, so they live at the repo root (see
   `link.sh` links it there by default: it opens a terminal in the foreground
   running `.config/keyd/install.sh`, which auto-elevates with sudo, links the
   config, and enables the keyd daemon.
+- `../scripts/hash-renamer.sh` — renames marker files. A file named
+  `##name##rest.ext` (the `##` markers are how you "request" a rename) becomes
+  `name-v#-dd-mm-yyyy-rest.ext` in the same folder; `v#` counts the files
+  already named `name-v[0-9]*` there, so `##hola##pero.txt` next to
+  `hola-v1-...` and `hola-v2-...` becomes `hola-v3-<today>-pero.txt`. Only
+  names starting with `##` are considered; `##` names without the second `##`
+  are left alone. Content is never touched. It runs as a daemon started by
+  `hypr/autostart.lua` (`hash-renamer.sh --watch`, rescans every 10s), or
+  manually: `./scripts/hash-renamer.sh` (one pass, `--dry-run` to preview,
+  `--help` for options).
 
 ## Usage
 
