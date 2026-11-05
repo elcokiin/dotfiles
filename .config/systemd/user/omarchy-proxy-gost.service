@@ -1,0 +1,15 @@
+[Unit]
+Description=Authenticated upstream relay for the Omarchy proxy
+ConditionPathExists=%h/.local/state/omarchy/proxy/gost.json
+After=default.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/gost -C %h/.local/state/omarchy/proxy/gost.json
+Restart=on-failure
+RestartSec=2s
+UnsetEnvironment=http_proxy https_proxy all_proxy HTTP_PROXY HTTPS_PROXY ALL_PROXY no_proxy NO_PROXY
+NoNewPrivileges=yes
+
+[Install]
+WantedBy=default.target

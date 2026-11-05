@@ -1,0 +1,694 @@
+#!/usr/bin/env bash
+#
+# omarchy-proxy - system-wide proxy toggle for Omarchy
+#
+# Routes proxy-aware clients through a local GOST relay to:
+#   - the systemd user session (all apps launched through uwsm-app / systemd)
+#   - ~/.config/environment.d (persists across logins)
+#   - the D-Bus activation environment
+#   - GNOME/GIO proxy settings (GTK apps, Firefox/Zen, Chromium)
+#   - git and npm
+#   - interactive shells (through shell.sh + env.sh)
+#
+# Upstream credentials stay in ~/.proxy_env_aliadas and a private GOST config.
+#
+# Usage:
+#   omarchy-proxy on|off|toggle
+#   omarchy-proxy status [--notify]
+#   omarchy-proxy active          # exit 0 when enabled (used by the menu)
+#   omarchy-proxy test [--notify]
+#   omarchy-proxy bar-status      # Waybar-style JSON for the Omarchy bar
+#   omarchy-proxy ui              # toggle in a terminal, showing each step
+#   omarchy-proxy edit            # open the credentials file
+#
+set -euo pipefail
+
+umask 077
+
+CONFIG_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/omarchy/proxy"
+STATE_DIR="$HOME/.local/state/omarchy/proxy"
+ENV_FILE="$CONFIG_DIR/env.sh"
+SYSTEMD_ENV_FILE="${XDG_CONFIG_HOME:-$HOME/.config}/environment.d/90-omarchy-proxy.conf"
+STATE_FILE="$STATE_DIR/enabled"
+LOCK_FILE="$STATE_DIR/lock"
+SECRETS_FILE="${OMARCHY_PROXY_SECRETS:-$HOME/.proxy_env_aliadas}"
+GOST_CONFIG="$STATE_DIR/gost.json"
+GOST_UNIT="omarchy-proxy-gost.service"
+GOST_PORT=8899
+PROXY_URL="http://127.0.0.1:$GOST_PORT"
+
+NO_PROXY_LIST="localhost,127.0.0.1,::1,10.0.0.0/8,192.168.0.0/16,.local"
+GSETTINGS_IGNORE="['localhost', '127.0.0.0/8', '::1', '10.0.0.0/8', '192.168.0.0/16', '*.local']"
+
+PROXY_VARS=(http_proxy https_proxy all_proxy HTTP_PROXY HTTPS_PROXY ALL_PROXY no_proxy NO_PROXY)
+
+# --- Terminal UI ------------------------------------------------------------
+# `omarchy-proxy ui` is meant to run inside a terminal opened from the bar.
+# It prints each step and the command behind it, then waits for Enter so the
+# user can read the result before the window closes.
+UI_MODE=0
+UI_FINISHED=0
+
+if [[ -t 1 ]]; then
+  C_RESET=$'\033[0m'
+  C_BOLD=$'\033[1m'
+  C_DIM=$'\033[2m'
+  C_CYAN=$'\033[36m'
+  C_GREEN=$'\033[32m'
+  C_YELLOW=$'\033[33m'
+  C_RED=$'\033[31m'
+else
+  C_RESET=''
+  C_BOLD=''
+  C_DIM=''
+  C_CYAN=''
+  C_GREEN=''
+  C_YELLOW=''
+  C_RED=''
+fi
+
+ui_header() {
+  [[ "$UI_MODE" -eq 1 ]] || return 0
+  printf '\n%s%s  OMARCHY PROXY%s\n' "$C_BOLD" "$C_CYAN" "$C_RESET"
+  printf '%s  --------------------------------------------------%s\n' "$C_DIM" "$C_RESET"
+  return 0
+}
+
+ui_phase() {
+  [[ "$UI_MODE" -eq 1 ]] || return 0
+  printf '\n%s[%s]%s %s\n' "$C_BOLD$C_CYAN" "$1" "$C_RESET" "$2"
+  return 0
+}
+
+ui_cmd() {
+  [[ "$UI_MODE" -eq 1 ]] || return 0
+  printf '       %s$ %s%s\n' "$C_DIM" "$*" "$C_RESET"
+  return 0
+}
+
+ui_ok() {
+  [[ "$UI_MODE" -eq 1 ]] || return 0
+  printf '       %s✓ %s%s\n' "$C_GREEN" "${1:-ok}" "$C_RESET"
+  return 0
+}
+
+ui_warn() {
+  [[ "$UI_MODE" -eq 1 ]] || return 0
+  printf '       %s! %s%s\n' "$C_YELLOW" "$1" "$C_RESET"
+  return 0
+}
+
+ui_pause() {
+  [[ "$UI_MODE" -eq 1 ]] || return 0
+  if [[ -t 0 ]]; then
+    printf '\nPulsa Enter para cerrar... '
+    read -r _ || true
+    printf '\n'
+  fi
+  return 0
+}
+
+ui_failure() {
+  printf '\n%s%s  ✖ LA OPERACIÓN NO TERMINÓ%s\n' "$C_BOLD" "$C_RED" "$C_RESET"
+  printf '  El proxy quedó como estaba o se revirtió.\n'
+  printf '  Revisa el error de arriba. Ya puedes cerrar esta ventana.\n\n'
+}
+
+ui_success() {
+  local state="$1" detail="$2"
+  printf '\n%s%s==================================================%s\n' "$C_BOLD" "$C_GREEN" "$C_RESET"
+  printf '%s  ✔ TODO QUEDÓ CONFIGURADO%s\n' "$C_BOLD$C_GREEN" "$C_RESET"
+  printf '  El proxy está %s%s%s.\n' "$C_BOLD" "$state" "$C_RESET"
+  printf '  %s\n' "$detail"
+  printf '  Ya puedes cerrar esta ventana.%s\n' "$C_RESET"
+  printf '%s==================================================%s\n' "$C_GREEN" "$C_RESET"
+}
+
+ui_exit_trap() {
+  local status=$?
+  trap - EXIT
+  if [[ "$UI_MODE" -eq 1 && "$UI_FINISHED" -eq 0 ]]; then
+    ui_failure
+    ui_pause
+  fi
+  exit "$status"
+}
+
+usage() {
+  sed -n '2,30p' "$0" | sed 's/^# \{0,1\}//'
+}
+
+die() {
+  printf 'omarchy-proxy: %s\n' "$*" >&2
+  exit 1
+}
+
+notify() {
+  local urgency="${1:-normal}" summary="$2" body="$3"
+  # In UI mode the terminal is the feedback surface; skip duplicate popups.
+  if [[ "$UI_MODE" -eq 1 ]]; then
+    return 0
+  fi
+  if command -v notify-send >/dev/null 2>&1; then
+    notify-send -a "Proxy" -u "$urgency" -i network-vpn "$summary" "$body" >/dev/null 2>&1 || true
+  fi
+}
+
+load_secrets() {
+  [[ -r "$SECRETS_FILE" ]] || die "no existe $SECRETS_FILE (credenciales del proxy)"
+  # shellcheck disable=SC1090
+  source "$SECRETS_FILE"
+
+  : "${PROXY_HOST:?falta PROXY_HOST en $SECRETS_FILE}"
+  : "${PROXY_PORT:?falta PROXY_PORT en $SECRETS_FILE}"
+  : "${PROXY_USER:?falta PROXY_USER en $SECRETS_FILE}"
+  : "${PROXY_PASS:?falta PROXY_PASS en $SECRETS_FILE}"
+}
+
+write_gost_config() {
+  local temporary
+  temporary="$(mktemp "$STATE_DIR/.gost.XXXXXX")"
+  if ! PROXY_HOST="$PROXY_HOST" PROXY_PORT="$PROXY_PORT" \
+    PROXY_USER="$PROXY_USER" PROXY_PASS="$PROXY_PASS" \
+    GOST_PORT="$GOST_PORT" GOST_CONFIG_TEMP="$temporary" python3 - <<'PY'
+import json
+import os
+
+config = {
+    "services": [{
+        "name": "omarchy-proxy",
+        "addr": f"127.0.0.1:{os.environ['GOST_PORT']}",
+        "handler": {"type": "http", "chain": "corporate"},
+        "listener": {"type": "tcp"},
+    }],
+    "chains": [{
+        "name": "corporate",
+        "hops": [{"nodes": [{
+            "name": "upstream",
+            "addr": f"{os.environ['PROXY_HOST']}:{os.environ['PROXY_PORT']}",
+            "connector": {
+                "type": "http",
+                "auth": {
+                    "username": os.environ['PROXY_USER'],
+                    "password": os.environ['PROXY_PASS'],
+                },
+            },
+            "dialer": {"type": "tcp"},
+        }]}],
+    }],
+}
+with open(os.environ['GOST_CONFIG_TEMP'], 'w') as output:
+    json.dump(config, output)
+PY
+  then
+    rm -f "$temporary"
+    return 1
+  fi
+  chmod 600 "$temporary"
+  mv -f "$temporary" "$GOST_CONFIG"
+}
+
+is_active() {
+  [[ -f "$STATE_FILE" ]] && systemctl --user is-active --quiet "$GOST_UNIT"
+}
+
+rollback_gost() {
+  local backup="$1" was_active="$2"
+  if [[ -n "$backup" && -f "$backup" ]]; then
+    mv -f "$backup" "$GOST_CONFIG"
+    if [[ "$was_active" -eq 1 ]]; then
+      systemctl --user restart "$GOST_UNIT" >/dev/null 2>&1 || true
+    else
+      systemctl --user stop "$GOST_UNIT" >/dev/null 2>&1 || true
+    fi
+  else
+    systemctl --user stop "$GOST_UNIT" >/dev/null 2>&1 || true
+    rm -f "$GOST_CONFIG"
+  fi
+  systemctl --user daemon-reload >/dev/null 2>&1 || true
+}
+
+probe_gost() {
+  local result code attempt
+  for attempt in {1..10}; do
+    if result="$(curl --noproxy '' -sS -o /dev/null -w 'HTTP %{http_code}' \
+      --connect-timeout 1 --max-time 15 --proxy "$PROXY_URL" https://archlinux.org 2>&1)"; then
+      code="${result#HTTP }"
+      if [[ "$code" =~ ^[23][0-9][0-9]$ ]]; then
+        printf '%s\n' "$result"
+        return 0
+      fi
+      printf '%s\n' "$result"
+      return 1
+    fi
+
+    if [[ "$result" != *"Could not connect to server"* && "$result" != *"Connection refused"* ]]; then
+      printf '%s\n' "$result"
+      return 1
+    fi
+    sleep 0.2
+  done
+
+  printf '%s\n' "relay local 127.0.0.1:$GOST_PORT no quedo disponible"
+  return 1
+}
+
+write_env_sh() {
+  mkdir -p "$CONFIG_DIR"
+  {
+    echo "# Generated by omarchy-proxy. Do not edit by hand."
+    printf 'export http_proxy=%q\n' "$PROXY_URL"
+    printf 'export https_proxy=%q\n' "$PROXY_URL"
+    printf 'export all_proxy=%q\n' "$PROXY_URL"
+    printf 'export HTTP_PROXY=%q\n' "$PROXY_URL"
+    printf 'export HTTPS_PROXY=%q\n' "$PROXY_URL"
+    printf 'export ALL_PROXY=%q\n' "$PROXY_URL"
+    printf 'export no_proxy=%q\n' "$NO_PROXY_LIST"
+    printf 'export NO_PROXY=%q\n' "$NO_PROXY_LIST"
+  } >"$ENV_FILE"
+  chmod 600 "$ENV_FILE"
+}
+
+write_systemd_env() {
+  mkdir -p "$(dirname "$SYSTEMD_ENV_FILE")"
+  {
+    echo "# Generated by omarchy-proxy. Do not edit by hand."
+    printf 'http_proxy="%s"\n' "$PROXY_URL"
+    printf 'https_proxy="%s"\n' "$PROXY_URL"
+    printf 'all_proxy="%s"\n' "$PROXY_URL"
+    printf 'HTTP_PROXY="%s"\n' "$PROXY_URL"
+    printf 'HTTPS_PROXY="%s"\n' "$PROXY_URL"
+    printf 'ALL_PROXY="%s"\n' "$PROXY_URL"
+    printf 'no_proxy="%s"\n' "$NO_PROXY_LIST"
+    printf 'NO_PROXY="%s"\n' "$NO_PROXY_LIST"
+  } >"$SYSTEMD_ENV_FILE"
+  chmod 600 "$SYSTEMD_ENV_FILE"
+}
+
+apply_systemd_env() {
+  if command -v systemctl >/dev/null 2>&1; then
+    systemctl --user set-environment \
+      http_proxy="$PROXY_URL" \
+      https_proxy="$PROXY_URL" \
+      all_proxy="$PROXY_URL" \
+      HTTP_PROXY="$PROXY_URL" \
+      HTTPS_PROXY="$PROXY_URL" \
+      ALL_PROXY="$PROXY_URL" \
+      no_proxy="$NO_PROXY_LIST" \
+      NO_PROXY="$NO_PROXY_LIST" >/dev/null 2>&1 || true
+  fi
+
+  if command -v dbus-update-activation-environment >/dev/null 2>&1; then
+    dbus-update-activation-environment --systemd \
+      http_proxy="$PROXY_URL" \
+      https_proxy="$PROXY_URL" \
+      all_proxy="$PROXY_URL" \
+      HTTP_PROXY="$PROXY_URL" \
+      HTTPS_PROXY="$PROXY_URL" \
+      ALL_PROXY="$PROXY_URL" \
+      no_proxy="$NO_PROXY_LIST" \
+      NO_PROXY="$NO_PROXY_LIST" >/dev/null 2>&1 || true
+  fi
+}
+
+clear_systemd_env() {
+  # dbus-update-activation-environment cannot unset, so explicitly empty them:
+  # an empty proxy variable is treated as "no proxy" by the tools that read it.
+  # On this stack it also mirrors the variables into the systemd user manager,
+  # so unset that afterwards to leave the manager clean.
+  if command -v dbus-update-activation-environment >/dev/null 2>&1; then
+    dbus-update-activation-environment \
+      http_proxy= https_proxy= all_proxy= \
+      HTTP_PROXY= HTTPS_PROXY= ALL_PROXY= \
+      no_proxy= NO_PROXY= >/dev/null 2>&1 || true
+  fi
+
+  if command -v systemctl >/dev/null 2>&1; then
+    systemctl --user unset-environment "${PROXY_VARS[@]}" >/dev/null 2>&1 || true
+  fi
+}
+
+gset() {
+  command -v gsettings >/dev/null 2>&1 || return 0
+  gsettings set "$@" >/dev/null 2>&1 || true
+}
+
+apply_gsettings() {
+  gset org.gnome.system.proxy mode 'manual'
+  gset org.gnome.system.proxy use-same-proxy true
+  gset org.gnome.system.proxy ignore-hosts "$GSETTINGS_IGNORE"
+
+  gset org.gnome.system.proxy.http host 127.0.0.1
+  gset org.gnome.system.proxy.http port "$GOST_PORT"
+  gset org.gnome.system.proxy.https host 127.0.0.1
+  gset org.gnome.system.proxy.https port "$GOST_PORT"
+
+  gset org.gnome.system.proxy.http use-authentication false
+  gset org.gnome.system.proxy.http authentication-user ''
+  gset org.gnome.system.proxy.http authentication-password ''
+}
+
+clear_gsettings() {
+  gset org.gnome.system.proxy mode 'none'
+  gset org.gnome.system.proxy.http host ''
+  gset org.gnome.system.proxy.http port 0
+  gset org.gnome.system.proxy.https host ''
+  gset org.gnome.system.proxy.https port 0
+  gset org.gnome.system.proxy.http use-authentication false
+  gset org.gnome.system.proxy.http authentication-user ''
+  gset org.gnome.system.proxy.http authentication-password ''
+}
+
+apply_tool_configs() {
+  if command -v git >/dev/null 2>&1; then
+    git config --global http.proxy "$PROXY_URL" >/dev/null 2>&1 || true
+    git config --global https.proxy "$PROXY_URL" >/dev/null 2>&1 || true
+  fi
+
+  if command -v npm >/dev/null 2>&1; then
+    npm config set proxy "$PROXY_URL" >/dev/null 2>&1 || true
+    npm config set https-proxy "$PROXY_URL" >/dev/null 2>&1 || true
+  fi
+}
+
+configure_spotify() {
+  command -v spotify >/dev/null 2>&1 || return 0
+
+  local helper="$(dirname "$(readlink -f -- "$0")")/spotify-prefs.py"
+  [[ -x "$helper" ]] || return 0
+
+  OMARCHY_PROXY_PORT="$GOST_PORT" python3 "$helper" "$1" || return 1
+
+  if pgrep -x spotify >/dev/null 2>&1; then
+    ui_warn "Spotify está abierto: reinícialo para aplicar el proxy."
+    notify normal "Reinicia Spotify" "Spotify debe reiniciarse para aplicar el proxy."
+  fi
+}
+
+configure_chromium() {
+  command -v chromium >/dev/null 2>&1 || return 0
+
+  local helper="$(dirname "$(readlink -f -- "$0")")/chromium-flags.py"
+  [[ -x "$helper" ]] || return 0
+
+  OMARCHY_PROXY_PORT="$GOST_PORT" python3 "$helper" "$1" || return 1
+  if pgrep -x chromium >/dev/null 2>&1; then
+    ui_warn "Chromium está abierto: reinícialo para aplicar el proxy."
+    notify normal "Reinicia Chromium" "Chromium debe reiniciarse para aplicar el proxy."
+  fi
+}
+
+clear_tool_configs() {
+  if command -v git >/dev/null 2>&1; then
+    git config --global --unset http.proxy >/dev/null 2>&1 || true
+    git config --global --unset https.proxy >/dev/null 2>&1 || true
+  fi
+
+  if command -v npm >/dev/null 2>&1; then
+    npm config delete proxy >/dev/null 2>&1 || true
+    npm config delete https-proxy >/dev/null 2>&1 || true
+  fi
+}
+
+enable() {
+  ui_phase "1/7" "Comprobando dependencias"
+  ui_cmd "command -v gost"
+  ui_cmd "command -v systemctl"
+  command -v gost >/dev/null 2>&1 || die "gost no esta instalado"
+  command -v systemctl >/dev/null 2>&1 || die "systemctl no esta disponible"
+  ui_ok "gost y systemctl disponibles"
+
+  ui_phase "2/7" "Leyendo credenciales privadas"
+  ui_cmd "source $SECRETS_FILE  (contenido oculto)"
+  load_secrets
+  ui_ok "credenciales cargadas; no se muestran en pantalla"
+
+  ui_phase "3/7" "Generando la configuracion privada de GOST"
+  mkdir -p "$CONFIG_DIR" "$STATE_DIR" "$(dirname "$SYSTEMD_ENV_FILE")"
+  chmod 700 "$STATE_DIR"
+
+  local backup="" was_active=0 result=""
+  if [[ -f "$GOST_CONFIG" ]]; then
+    backup="$(mktemp "$STATE_DIR/.gost-backup.XXXXXX")"
+    cp "$GOST_CONFIG" "$backup"
+    chmod 600 "$backup"
+  fi
+  systemctl --user is-active --quiet "$GOST_UNIT" && was_active=1 || true
+
+  ui_cmd "python3 (genera gost.json con las credenciales)"
+  if ! write_gost_config; then
+    [[ -z "$backup" ]] || rm -f "$backup"
+    die "no se pudo generar la configuracion privada de GOST"
+  fi
+  ui_ok "configuracion escrita en $GOST_CONFIG (modo 600)"
+
+  ui_phase "4/7" "Arrancando el relay local"
+  ui_cmd "systemctl --user daemon-reload"
+  ui_cmd "systemctl --user enable $GOST_UNIT"
+  if ! systemctl --user daemon-reload || ! systemctl --user enable "$GOST_UNIT" >/dev/null; then
+    rollback_gost "$backup" "$was_active"
+    die "no se pudo preparar el servicio GOST; no se publicaron los ajustes"
+  fi
+  if [[ "$was_active" -eq 1 ]]; then
+    ui_cmd "systemctl --user restart $GOST_UNIT"
+    systemctl --user restart "$GOST_UNIT" >/dev/null || {
+      rollback_gost "$backup" "$was_active"
+      die "no se pudo reiniciar el relay GOST"
+    }
+  else
+    ui_cmd "systemctl --user start $GOST_UNIT"
+    systemctl --user start "$GOST_UNIT" >/dev/null || {
+      rollback_gost "$backup" "$was_active"
+      die "no se pudo iniciar el relay GOST"
+    }
+  fi
+  ui_ok "relay activo en 127.0.0.1:$GOST_PORT"
+
+  ui_phase "5/7" "Verificando la salida a Internet"
+  ui_cmd "curl --proxy $PROXY_URL https://archlinux.org"
+  if ! systemctl --user is-active --quiet "$GOST_UNIT" || ! result="$(probe_gost)"; then
+    rollback_gost "$backup" "$was_active"
+    die "fallo la prueba a traves del relay GOST (${result:-servicio inactivo}); no se publicaron los ajustes"
+  fi
+  ui_ok "conexion verificada: $result"
+
+  ui_phase "6/7" "Publicando los ajustes en el sistema y las apps"
+  ui_cmd "systemctl --user set-environment http_proxy=... (8 variables)"
+  ui_cmd "dbus-update-activation-environment --systemd ... (8 variables)"
+  write_env_sh
+  write_systemd_env
+  apply_systemd_env
+  ui_cmd "gsettings set org.gnome.system.proxy ... (GTK, Firefox/Zen, Chromium)"
+  apply_gsettings
+  ui_cmd "git config --global http.proxy $PROXY_URL"
+  ui_cmd "npm config set proxy $PROXY_URL"
+  apply_tool_configs
+  ui_cmd "python3 spotify-prefs.py on"
+  configure_spotify on
+  ui_cmd "python3 chromium-flags.py on"
+  configure_chromium on
+  ui_ok "ajustes publicados; las apps abiertas pueden necesitar reinicio"
+
+  ui_phase "7/7" "Guardando el estado"
+  : >"$STATE_FILE"
+  chmod 600 "$STATE_FILE"
+  ui_ok "estado guardado en $STATE_FILE"
+
+  printf 'Proxy ACTIVADO -> 127.0.0.1:%s (GOST)\n' "$GOST_PORT"
+  notify normal "Proxy activado" "Relay local listo en 127.0.0.1:${GOST_PORT}.
+Las apps que ya estaban abiertas pueden necesitar reinicio."
+}
+
+disable() {
+  ui_phase "1/6" "Eliminando las variables de entorno"
+  ui_cmd "rm -f $ENV_FILE $SYSTEMD_ENV_FILE"
+  rm -f "$ENV_FILE" "$SYSTEMD_ENV_FILE"
+  ui_cmd "dbus-update-activation-environment http_proxy= ... (limpia)"
+  ui_cmd "systemctl --user unset-environment ${PROXY_VARS[*]}"
+  clear_systemd_env
+  ui_ok "variables de entorno eliminadas"
+
+  ui_phase "2/6" "Restaurando la configuracion del escritorio"
+  ui_cmd "gsettings set org.gnome.system.proxy mode 'none'"
+  clear_gsettings
+  ui_ok "proxy del escritorio desactivado"
+
+  ui_phase "3/6" "Limpiando git y npm"
+  ui_cmd "git config --global --unset http.proxy"
+  ui_cmd "git config --global --unset https.proxy"
+  ui_cmd "npm config delete proxy"
+  ui_cmd "npm config delete https-proxy"
+  clear_tool_configs
+  ui_ok "git y npm sin proxy"
+
+  ui_phase "4/6" "Restaurando Spotify y Chromium"
+  ui_cmd "python3 spotify-prefs.py off"
+  configure_spotify off
+  ui_cmd "python3 chromium-flags.py off"
+  configure_chromium off
+  ui_ok "apps restauradas"
+
+  ui_phase "5/6" "Deteniendo el relay GOST"
+  ui_cmd "systemctl --user stop $GOST_UNIT"
+  if systemctl --user is-active --quiet "$GOST_UNIT"; then
+    systemctl --user stop "$GOST_UNIT" >/dev/null || die "no se pudo detener el relay GOST"
+  fi
+  ui_ok "relay detenido"
+
+  ui_phase "6/6" "Eliminando la configuracion privada y el estado"
+  ui_cmd "rm -f $GOST_CONFIG $STATE_FILE"
+  rm -f "$GOST_CONFIG" "$STATE_FILE"
+  ui_ok "configuracion y estado eliminados"
+
+  printf 'Proxy DESACTIVADO\n'
+  notify low "Proxy desactivado" "El trafico vuelve a salir directo."
+}
+
+status_text() {
+  if [[ -f "$STATE_FILE" ]] && ! systemctl --user is-active --quiet "$GOST_UNIT"; then
+    printf 'Proxy configurado, pero el relay GOST esta detenido'
+  elif is_active; then
+    if [[ -r "$ENV_FILE" ]]; then
+      # shellcheck disable=SC1090
+      source "$ENV_FILE"
+      printf 'Proxy ACTIVADO -> %s' "$http_proxy"
+    else
+      printf 'Proxy ACTIVADO'
+    fi
+  else
+    printf 'Proxy DESACTIVADO'
+  fi
+}
+
+status() {
+  local text
+  text="$(status_text)"
+  printf '%s\n' "$text"
+  if [[ "${1:-}" == "--notify" ]]; then
+    notify normal "Estado del proxy" "$text"
+  fi
+}
+
+test_proxy() {
+  local mode="${1:-}"
+
+  if ! is_active; then
+    printf 'El proxy esta desactivado. Activalo antes de probar.\n' >&2
+    [[ "$mode" == "--notify" ]] && notify normal "Proxy desactivado" "Activalo antes de probar."
+    return 1
+  fi
+
+  local result code urgency=normal
+  if result="$(curl --noproxy '' -sS -o /dev/null -w 'HTTP %{http_code} en %{time_total}s' --max-time 15 --proxy "$PROXY_URL" https://archlinux.org 2>&1)"; then
+    code="${result#HTTP }"
+    code="${code%% *}"
+    if [[ "$code" =~ ^[23][0-9][0-9]$ ]]; then
+      printf '%s\n' "$result"
+    else
+      urgency=critical
+      printf 'La solicitud no fue exitosa: %s\n' "$result"
+    fi
+  else
+    urgency=critical
+    printf 'No se pudo conectar: %s\n' "$result"
+    code=000
+  fi
+
+  if [[ "$mode" == "--notify" ]]; then
+    notify "$urgency" "Prueba de proxy" "$result"
+  fi
+  [[ "$code" =~ ^[23][0-9][0-9]$ ]]
+}
+
+bar_status() {
+  if is_active; then
+    printf '{"text":"󰦝","tooltip":"Proxy activo via relay local 127.0.0.1:%s\\nClic para desactivar","class":"active"}\n' "$GOST_PORT"
+  elif [[ -f "$STATE_FILE" ]]; then
+    printf '{"text":"󰦞","tooltip":"Error: el relay GOST esta detenido\\nClic para reintentar","class":"urgent"}\n'
+  else
+    printf '{"text":"󰦞","tooltip":"Proxy desactivado\\nClic para activar","class":""}\n'
+  fi
+}
+
+run_ui() {
+  UI_MODE=1
+  UI_FINISHED=0
+  trap ui_exit_trap EXIT
+
+  ui_header
+  if is_active; then
+    printf '  Estado actual: ACTIVADO\n'
+    printf '  Desactivando el proxy...\n'
+    disable
+    UI_FINISHED=1
+    trap - EXIT
+    ui_success "DESACTIVADO" "El tráfico vuelve a salir directo."
+  else
+    printf '  Estado actual: DESACTIVADO\n'
+    printf '  Activando el proxy...\n'
+    enable
+    UI_FINISHED=1
+    trap - EXIT
+    ui_success "ACTIVADO" "Las apps que ya estaban abiertas pueden necesitar reinicio."
+  fi
+
+  ui_pause
+  UI_MODE=0
+}
+
+main() {
+  local cmd="${1:-status}"
+  shift || true
+
+  case "$cmd" in
+  on | enable)
+    mkdir -p "$STATE_DIR"
+    exec 9>"$LOCK_FILE"
+    flock 9
+    enable
+    ;;
+  off | disable)
+    mkdir -p "$STATE_DIR"
+    exec 9>"$LOCK_FILE"
+    flock 9
+    disable
+    ;;
+  toggle)
+    mkdir -p "$STATE_DIR"
+    exec 9>"$LOCK_FILE"
+    flock 9
+    if is_active; then disable; else enable; fi
+    ;;
+  ui | toggle-ui)
+    mkdir -p "$STATE_DIR"
+    exec 9>"$LOCK_FILE"
+    flock 9
+    run_ui
+    ;;
+  status)
+    status "${1:-}"
+    ;;
+  active)
+    is_active
+    ;;
+  test | proxytest)
+    test_proxy "${1:-}"
+    ;;
+  bar | bar-status)
+    bar_status
+    ;;
+  edit)
+    exec "${EDITOR:-nvim}" "$SECRETS_FILE"
+    ;;
+  -h | --help | help)
+    usage
+    ;;
+  *)
+    printf 'omarchy-proxy: comando desconocido: %s\n' "$cmd" >&2
+    usage >&2
+    exit 2
+    ;;
+  esac
+}
+
+main "$@"

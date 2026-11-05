@@ -17,6 +17,10 @@ Linked by default:
   - hypr/*        -> ~/.config/hypr
   - fcitx5/*      -> ~/.config/fcitx5  (+ conf/*, themes -> ~/.local/share/fcitx5/themes)
   - hooks/*       -> ~/.config/omarchy/hooks
+  - omarchy/shell.json -> ~/.config/omarchy/shell.json
+  - omarchy/extensions/omarchy-menu.jsonc -> ~/.config/omarchy/extensions/
+  - proxy/        -> ~/.config/omarchy/proxy (+ ~/.local/bin/omarchy-proxy,
+                    and the ~/.bashrc source line)
   - .config/herdr/config.toml -> ~/.config/herdr
   - .agents/      -> ~/.agents (agent skills, incl. the omarchy skill)
   - /etc/keyd (system-wide; link.sh opens a terminal to run .config/keyd/install.sh)
@@ -126,6 +130,48 @@ for src_file in "$SCRIPT_DIR"/hooks/*; do
   [ -f "$src_file" ] || continue
   link "$src_file" "$HOME/.config/omarchy/hooks/$(basename "$src_file")"
 done
+
+# --- Omarchy shell + menu ----------------------------------------------------
+echo
+echo "● Omarchy shell"
+link "$SCRIPT_DIR/omarchy/shell.json" "$HOME/.config/omarchy/shell.json"
+link "$SCRIPT_DIR/omarchy/extensions/omarchy-menu.jsonc" "$HOME/.config/omarchy/extensions/omarchy-menu.jsonc"
+
+# --- Authenticated proxy relay -----------------------------------------------
+echo
+echo "● Proxy relay service"
+link "$SCRIPT_DIR/../.config/systemd/user/omarchy-proxy-gost.service" "$HOME/.config/systemd/user/omarchy-proxy-gost.service"
+systemctl --user daemon-reload
+
+# --- Proxy -------------------------------------------------------------------
+echo
+echo "● Proxy"
+mkdir -p "$HOME/.config/omarchy/proxy"
+link "$SCRIPT_DIR/proxy/omarchy-proxy" "$HOME/.config/omarchy/proxy/omarchy-proxy"
+link "$SCRIPT_DIR/proxy/shell.sh" "$HOME/.config/omarchy/proxy/shell.sh"
+link "$SCRIPT_DIR/proxy/omarchy-proxy" "$HOME/.local/bin/omarchy-proxy"
+chmod +x "$SCRIPT_DIR/proxy/omarchy-proxy"
+
+# Load the helpers from ~/.bashrc. The old inline proxy block (if present) is
+# removed first; it used to be the last section of the file.
+BASHRC="$HOME/.bashrc"
+if [ -f "$BASHRC" ]; then
+  if grep -qF '.config/omarchy/proxy/shell.sh' "$BASHRC"; then
+    echo "✔️  ~/.bashrc already loads the proxy helpers."
+  else
+    cp "$BASHRC" "$BASHRC.back.$(date +%s)"
+    if grep -qF '# Proxy de la empresa' "$BASHRC"; then
+      sed -i '/^# Proxy de la empresa$/,$d' "$BASHRC"
+      echo "📦 Removed the old inline proxy block from ~/.bashrc."
+    fi
+    {
+      echo
+      echo "# Proxy toggle (managed by dotfiles: omarchy-config/proxy/shell.sh)"
+      echo '[[ -f "$HOME/.config/omarchy/proxy/shell.sh" ]] && source "$HOME/.config/omarchy/proxy/shell.sh"'
+    } >>"$BASHRC"
+    echo "🔗 Added the proxy helpers to ~/.bashrc."
+  fi
+fi
 
 # --- Herdr -------------------------------------------------------------------
 echo

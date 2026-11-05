@@ -25,6 +25,12 @@ check_link "$HYPR_DOTFILES/bindings.lua" "$HOME/.config/hypr/bindings.lua"
 check_link "$HYPR_DOTFILES/input.lua" "$HOME/.config/hypr/input.lua"
 check_link "$HYPR_DOTFILES/monitors.lua" "$HOME/.config/hypr/monitors.lua"
 check_link "$HYPR_DOTFILES/autostart.lua" "$HOME/.config/hypr/autostart.lua"
+check_link "$SCRIPT_DIR/omarchy/shell.json" "$HOME/.config/omarchy/shell.json"
+check_link "$SCRIPT_DIR/omarchy/extensions/omarchy-menu.jsonc" "$HOME/.config/omarchy/extensions/omarchy-menu.jsonc"
+check_link "$SCRIPT_DIR/../.config/systemd/user/omarchy-proxy-gost.service" "$HOME/.config/systemd/user/omarchy-proxy-gost.service"
+check_link "$SCRIPT_DIR/proxy/omarchy-proxy" "$HOME/.config/omarchy/proxy/omarchy-proxy"
+check_link "$SCRIPT_DIR/proxy/shell.sh" "$HOME/.config/omarchy/proxy/shell.sh"
+check_link "$SCRIPT_DIR/proxy/omarchy-proxy" "$HOME/.local/bin/omarchy-proxy"
 check_link "$SCRIPT_DIR/../.config/herdr/config.toml" "$HOME/.config/herdr/config.toml"
 check_link "$SCRIPT_DIR/../.config/keyd/default.conf" "/etc/keyd/default.conf"
 check_link "$SCRIPT_DIR/../.agents" "$HOME/.agents"
@@ -35,6 +41,22 @@ if [ -L "$THEME_LINK" ] && [ "$(readlink -f "$THEME_LINK")" = "$(readlink -f "$T
   echo "✅ linked: $THEME_LINK -> omarchy current theme"
 else
   echo "❌ missing or stale: $THEME_LINK"
+fi
+
+if grep -qF '.config/omarchy/proxy/shell.sh' "$HOME/.bashrc" 2>/dev/null; then
+  echo "✅ ~/.bashrc loads the proxy helpers"
+else
+  echo "⚠️  ~/.bashrc does not load the proxy helpers"
+fi
+
+if command -v omarchy-proxy >/dev/null 2>&1; then
+  if omarchy-proxy active >/dev/null 2>&1; then
+    echo "✅ proxy: ACTIVO"
+  else
+    echo "ℹ️  proxy: desactivado"
+  fi
+else
+  echo "❌ omarchy-proxy is not on PATH"
 fi
 
 echo
