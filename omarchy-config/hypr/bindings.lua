@@ -59,3 +59,15 @@ o.bind("SUPER + CTRL + SHIFT + 2", "Claude", { webapp = "https://claude.ai/new" 
 o.bind("SUPER + CTRL + SHIFT + 3", "Gemini", { webapp = "https://gemini.google.com" })
 o.bind("SUPER + CTRL + SHIFT + 4", "Grok", { webapp = "https://grok.com/" })
 o.bind("SUPER + CTRL + SHIFT + 5", "DeepSeek", { webapp = "https://chat.deepseek.com" })
+
+-- Omarchy 4 binds holding Right Alt (AltGr) to dictation push-to-talk, which
+-- steals every AltGr combo. Give AltGr back to keyd (AltGr + hjkl, AltGr + q..p,
+-- etc.). Holding Left Alt + Right Alt together is turned into F13 by keyd, so
+-- dictation stays a deliberate two-key chord.
+hl.unbind("ALT + Alt_R")
+hl.unbind("ALT + SPACE")
+
+if o.dictation_installed and o.dictation_installed() then
+  o.bind("SUPER + CTRL + X", "Toggle dictation", "omarchy-dictation toggle")
+  o.bind_hold("F13", "Start dictation (push-to-talk)", "omarchy-dictation start", "Stop dictation (push-to-talk)", "omarchy-dictation stop", { ignore_mods = true })
+end
