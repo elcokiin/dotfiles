@@ -61,9 +61,10 @@ o.bind("SUPER + CTRL + SHIFT + 4", "Grok", { webapp = "https://grok.com/" })
 o.bind("SUPER + CTRL + SHIFT + 5", "DeepSeek", { webapp = "https://chat.deepseek.com" })
 
 -- Omarchy 4 binds holding Right Alt (AltGr) to dictation push-to-talk, which
--- steals every AltGr combo. Give AltGr back to keyd (AltGr + hjkl, AltGr + q..p,
--- etc.). Holding Left Alt + Right Alt together is turned into F13 by keyd, so
--- dictation stays a deliberate two-key chord.
+-- steals every AltGr combo. keyd now owns AltGr (AltGr + hjkl, AltGr + q..p,
+-- etc.), so Hyprland never sees Alt_R. Holding Left Alt + Caps Lock together is
+-- turned into F13 by keyd, so dictation stays a deliberate two-key chord and
+-- Alt + AltGr + H/L keeps working for Alt + Left/Right.
 hl.unbind("ALT + Alt_R")
 hl.unbind("ALT + SPACE")
 

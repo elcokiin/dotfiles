@@ -28,8 +28,10 @@ Non-Omarchy tools (or configs that need root) live in the repo root, not in
   sees `Alt_R` and a future Omarchy update cannot steal it. AltGr + HJKL ->
   arrows, AltGr + Q..P -> digits 1..0, AltGr + g / Shift+g -> Home / End,
   AltGr + `[`/`]` -> PageUp/PageDown, AltGr + `-`/`=` -> brightness,
-  AltGr + `;`/`'` -> volume, AltGr + Tab -> Esc. Left Alt + Right Alt -> F13 for
-  dictation push-to-talk. The number row types normal digits.
+  AltGr + `;`/`'` -> volume, AltGr + Tab -> Esc. Holding Left Alt with AltGr
+  turns those arrows into Alt + Left/Right (herdr tab switching), and Left Alt
+  + Caps Lock -> F13 for dictation push-to-talk. The number row types normal
+  digits.
   Install with `sudo ./.config/keyd/install.sh`; apply changes with
   `sudo keyd reload`.
 - `.config/herdr/` — herdr terminal multiplexer config; linked by `link.sh`.
