@@ -60,24 +60,68 @@ else
 fi
 
 echo
-echo "🔐 Biometrics status"
-echo "--------------------"
-if [ -f /etc/pam.d/hyprlock ] && grep -q '^auth sufficient pam_howdy.so$' /etc/pam.d/hyprlock; then
-  echo "✅ /etc/pam.d/hyprlock has pam_howdy"
+echo "🔐 Biometrics status (Facelock)"
+echo "-------------------------------"
+
+if command -v facelock >/dev/null 2>&1; then
+  echo "✅ facelock is installed"
 else
-  echo "⚠️  /etc/pam.d/hyprlock missing pam_howdy"
+  echo "❌ facelock is not installed"
 fi
 
-if [ -f /etc/pam.d/sudo ] && grep -q '^auth sufficient pam_howdy.so$' /etc/pam.d/sudo; then
-  echo "✅ /etc/pam.d/sudo has pam_howdy"
+if facelock status 2>/dev/null | grep -q '\[ok\] responding'; then
+  echo "✅ facelock daemon is responding"
 else
-  echo "⚠️  /etc/pam.d/sudo missing pam_howdy"
+  echo "⚠️  facelock daemon is not responding"
 fi
 
-if [ -f /etc/pam.d/polkit-1 ] && grep -q '^auth sufficient pam_howdy.so$' /etc/pam.d/polkit-1; then
-  echo "✅ /etc/pam.d/polkit-1 has pam_howdy"
+if facelock list --user "$USER" 2>/dev/null | grep -qE 'Total: [1-9][0-9]* model'; then
+  echo "✅ $USER has enrolled face models"
 else
-  echo "⚠️  /etc/pam.d/polkit-1 missing pam_howdy"
+  echo "⚠️  $USER has no enrolled face models (facelock enroll)"
+fi
+
+if facelock status 2>/dev/null | grep -q 'require_ir: yes'; then
+  echo "✅ facelock requires an IR camera"
+else
+  echo "⚠️  facelock does not require an IR camera"
+fi
+
+for pam_service in sudo polkit-1; do
+  if [ -f "/etc/pam.d/$pam_service" ] && grep -qE '^auth[[:space:]]+sufficient[[:space:]]+pam_facelock\.so' "/etc/pam.d/$pam_service"; then
+    echo "✅ /etc/pam.d/$pam_service has pam_facelock"
+  else
+    echo "⚠️  /etc/pam.d/$pam_service missing pam_facelock"
+  fi
+done
+
+if [ -f /etc/pam.d/omarchy-lock-face ] && grep -qE '^auth[[:space:]]+sufficient[[:space:]]+pam_facelock\.so' /etc/pam.d/omarchy-lock-face; then
+  echo "✅ /etc/pam.d/omarchy-lock-face has pam_facelock"
+else
+  echo "⚠️  /etc/pam.d/omarchy-lock-face missing; the lock screen will use password only"
+fi
+
+if [ -d "$HOME/.config/omarchy/plugins/$USER.lock" ]; then
+  echo "✅ patched lock plugin is installed ($USER.lock)"
+  base_version="$(cat "$SCRIPT_DIR/face-lock/plugin/base-version" 2>/dev/null || true)"
+  installed_version="$(pacman -Q omarchy 2>/dev/null | awk '{print $2}' || true)"
+  if [ -n "$base_version" ] && [ "$base_version" != "$installed_version" ]; then
+    echo "ℹ️  lock plugin targets Omarchy $base_version, $installed_version is installed; re-clone after major lock changes"
+  fi
+else
+  echo "ℹ️  patched lock plugin is not installed (built-in lock in use)"
+fi
+
+lock_status="$(omarchy-shell lock status 2>/dev/null || true)"
+if printf '%s' "$lock_status" | grep -q '"passwordPam":true'; then
+  echo "✅ Quickshell lock reports a working password lane"
+else
+  echo "❌ Quickshell lock did not answer lock status"
+fi
+if printf '%s' "$lock_status" | grep -q '"face":true'; then
+  echo "✅ Quickshell lock sees the face lane"
+elif printf '%s' "$lock_status" | grep -q '"face"'; then
+  echo "⚠️  Quickshell lock is patched but does not see the face lane"
 fi
 
 echo

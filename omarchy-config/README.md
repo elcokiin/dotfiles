@@ -10,11 +10,14 @@ symlinks them all into place:
   service), `.config/herdr/` (config.toml),
   `.config/keyd/` (default.conf -> `/etc/keyd`), and `nvim/` (via stow) by
   default; `--with-tmux` also links `tmux-before-native/`, and
-  `--with-biometrics` runs face-auth setup.
+  `--with-biometrics` runs the legacy Howdy setup (not used by the Quickshell
+  lock; use `face-lock/install.sh` instead).
 - `doctor.sh`: verifies links and biometric status.
 - `delete-apps.sh`: helper to remove stock apps.
-- `biometrics/setup-face-login.sh`: system-level face auth setup (opt-in).
-- `biometrics/remove-face-login.sh`: removes the face-auth PAM integration.
+- `face-lock/`: Facelock + Quickshell lock screen integration (the face setup
+  currently used on this machine).
+- `biometrics/setup-face-login.sh`: legacy Howdy setup for hyprlock (opt-in).
+- `biometrics/remove-face-login.sh`: removes the legacy Howdy PAM integration.
 
 Superseded by `link.sh` and removed: `bootstrap.sh`, `install-hypr.sh`,
 `install-fcitx5.sh`, `install-hooks.sh`, `install-tmux.sh`, `install-nvim.sh`,
@@ -139,68 +142,43 @@ Run the full link setup (everything except opt-in modules):
 ./omarchy-config/link.sh
 ```
 
-Add optional modules:
+Add the optional tmux module:
 
 ```sh
-./omarchy-config/link.sh --with-tmux --with-biometrics
+./omarchy-config/link.sh --with-tmux
 ```
 
-Biometrics (opt-in):
+## Face unlock (Facelock + Quickshell lock)
+
+This machine uses **Facelock**, not Howdy, and the lock is the Quickshell
+`omarchy.lock`, not hyprlock. `face-lock/` connects Facelock to that lock:
+
+- `/etc/pam.d/sudo` and `/etc/pam.d/polkit-1` carry `pam_facelock.so` (already
+  configured by `facelock setup`).
+- `/etc/pam.d/omarchy-lock-face` is a third, independent lane for the lock
+  screen, so a face miss never delays a typed password.
+- A cloned `omarchy.lock` plugin starts a face attempt on a keypress, click,
+  pointer move that wakes a blanked display, or lid reopen. It retries up to
+  three times per activity window and falls back to the password untouched.
+
+Install:
 
 ```sh
-HOWDY_DEVICE_PATH=/dev/v4l/by-id/your-ir-camera ./omarchy-config/link.sh --with-biometrics
+./omarchy-config/face-lock/install.sh
 ```
 
-If `HOWDY_DEVICE_PATH` is not set, camera selection is interactive.
-The setup shows only usable video-capture devices, prefers stable `/dev/v4l/by-id`
-or `/dev/v4l/by-path` paths, and marks the likely IR camera as recommended.
-In that selection menu, press `p` to preview the recommended camera or `p1`,
-`p2`, etc. to preview a specific option before selecting it.
-During face enrollment, the setup asks for the model label before opening the
-camera. Then it prompts before each capture: press `p` to preview the selected
-camera, close the preview window, then press `Enter` to let Howdy capture that
-model immediately without another label prompt. Use
-`HOWDY_ENROLL_PREVIEW=always` to open the preview before every capture
-automatically, or `HOWDY_ENROLL_PREVIEW=never` to skip those prompts.
-
-The biometric setup tunes Howdy for faster local authentication by default:
+Test:
 
 ```sh
-HOWDY_PROFILE=fast HOWDY_ENROLL_COUNT=3 ./omarchy-config/link.sh --with-biometrics
+omarchy-shell lock status | jq '{face, authenticating, lastEvent}'
 ```
 
-Profiles:
+Then lock with `Super + Escape`, look at the camera, and press any key. Details,
+tuning, rollback, and post-update re-porting are in `face-lock/README.md`.
 
-- `fast`: default. Uses the HOG detector, short timeout, MJPEG, 15 FPS, and a more tolerant match threshold.
-- `balanced`: close to Howdy defaults.
-- `secure`: stricter threshold; expect more password fallbacks.
-- `cnn`: more tolerant of pose/angle changes, but slower without a GPU.
-
-For best results, enroll several models in normal real-world conditions: straight at the camera, slight left/right angle, with and without glasses, and both day/night lighting. More models usually reduce false negatives better than a single "perfect" photo.
-
-Advanced overrides are available as env vars:
-
-```sh
-HOWDY_CERTAINTY=4.5 HOWDY_TIMEOUT=2 HOWDY_MAX_HEIGHT=320 HOWDY_ENROLL_COUNT=4 \
-  ./omarchy-config/link.sh --with-biometrics
-```
-
-Howdy's `certainty` is a threshold from 1 to 10 where higher is more tolerant; values above 5 are not recommended because they increase false-positive risk.
-
-After setup, test the real PAM integration with:
-
-```sh
-sudo -k && sudo -v
-```
-
-Then test the lock screen with `Super + Escape`. Howdy also has a graphical
-`howdy test` window, but the setup skips it by default because Qt/X11 display
-access often fails under `sudo` on Wayland even when face authentication is
-configured correctly. To run it anyway:
-
-```sh
-HOWDY_RUN_TEST=1 ./omarchy-config/link.sh --with-biometrics
-```
+The old `biometrics/` Howdy scripts target hyprlock, which Omarchy no longer
+uses. They are kept for history; do not run `link.sh --with-biometrics` on this
+setup, because it would add Howdy to a lock that is not in use.
 
 ## Validation
 
@@ -208,17 +186,17 @@ HOWDY_RUN_TEST=1 ./omarchy-config/link.sh --with-biometrics
 ./omarchy-config/doctor.sh
 ```
 
-This checks:
+This checks symlinks, the proxy, and the current biometric setup:
 
-- Symlinks for Hypr and Walker.
-- Whether `hyprlock.conf` is linked from dotfiles.
-- PAM Howdy lines in `/etc/pam.d/{hyprlock,sudo,polkit-1}`.
-- Hyprlock biometric UI setting.
+- Facelock daemon, enrollment, and IR requirement.
+- `pam_facelock` in `sudo`, `polkit-1`, and `omarchy-lock-face`.
+- The patched `$USER.lock` plugin and the Quickshell lock's face lane.
 
 ## Replication on another PC
 
 1. Clone this repository.
 2. Run `./omarchy-config/link.sh`.
 3. Optionally run `./omarchy-config/link.sh --with-tmux`.
-4. Optionally run `./omarchy-config/link.sh --with-biometrics`.
+4. On a machine with an IR camera and Facelock enrolled, run
+   `./omarchy-config/face-lock/install.sh`.
 5. Run `./omarchy-config/doctor.sh`.

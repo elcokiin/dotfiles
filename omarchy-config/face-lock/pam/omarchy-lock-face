@@ -1,0 +1,9 @@
+#%PAM-1.0
+# Face lane for the Omarchy Quickshell lock screen.
+#
+# The lock runs this as its own PAM conversation, next to the password lane,
+# so a face miss never adds latency to typing a password. pam_deny gives a
+# non-match a verdict instead of leaving the stack without one.
+auth       sufficient                  pam_facelock.so
+auth       required                    pam_deny.so
+account    include                     system-local-login
