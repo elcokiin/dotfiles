@@ -4,7 +4,7 @@ This folder contains the customized Omarchy configs and a single script that
 symlinks them all into place:
 
 - `link.sh`: the one global link script. Symlinks `hypr/` (quattro-style `.lua`
-  overrides: input, bindings, monitors, looknfeel, autostart), `fcitx5/`, `hooks/`,
+  overrides: input, bindings, monitors, looknfeel, autostart), `hooks/`,
   `omarchy/` (shell.json + extensions/omarchy-menu.jsonc), `proxy/`
   (`omarchy-proxy` + shell helpers), `.config/systemd/user/` (GOST relay
   service), `.config/herdr/` (config.toml),
@@ -25,6 +25,13 @@ and `herdr/symlink.sh`. `walker/` and `hyprlock.conf` were moved to
 `legacy/omarchy/` — walker is no longer used by Omarchy (replaced by
 omarchy-menu, omacalc, and the omarchy.clipboard copy-history overlay) and the
 lock is now the Quickshell `omarchy.lock` overlay.
+
+The old manual fcitx5 layout switch (`fcitx5/profile`,
+`fcitx5/toggle-layout.sh`, its custom `config`, and the Catppuccin theme) was
+removed in favor of Omarchy's native typing setup: Setup > Typing > Keyboard
+Layouts and Input Methods, plus the `omarchy.keyboard-layout` bar widget. Let
+Omarchy manage `~/.config/fcitx5/` and `~/.config/omarchy/keyboard-layouts`
+instead of linking overrides.
 
 ## Windows VM (omarchy-windows-vm)
 

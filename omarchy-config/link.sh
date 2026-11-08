@@ -15,7 +15,6 @@ config into its place under ~/.config (and ~/.local/share where needed).
 
 Linked by default:
   - hypr/*        -> ~/.config/hypr
-  - fcitx5/*      -> ~/.config/fcitx5  (+ conf/*, themes -> ~/.local/share/fcitx5/themes)
   - hooks/*       -> ~/.config/omarchy/hooks
   - omarchy/shell.json -> ~/.config/omarchy/shell.json
   - omarchy/extensions/omarchy-menu.jsonc -> ~/.config/omarchy/extensions/
@@ -103,24 +102,6 @@ for src_file in "$SCRIPT_DIR"/hypr/*; do
   *.back) continue ;;
   esac
   link "$src_file" "$HOME/.config/hypr/$(basename "$src_file")"
-done
-
-# --- Fcitx5 ------------------------------------------------------------------
-echo
-echo "● Fcitx5"
-for src_file in "$SCRIPT_DIR"/fcitx5/*; do
-  [ -f "$src_file" ] || continue
-  link "$src_file" "$HOME/.config/fcitx5/$(basename "$src_file")"
-done
-
-for src_conf in "$SCRIPT_DIR"/fcitx5/conf/*; do
-  [ -f "$src_conf" ] || continue
-  link "$src_conf" "$HOME/.config/fcitx5/conf/$(basename "$src_conf")"
-done
-
-for src_theme in "$SCRIPT_DIR"/fcitx5/themes/*; do
-  [ -d "$src_theme" ] || continue
-  link "$src_theme" "$HOME/.local/share/fcitx5/themes/$(basename "$src_theme")"
 done
 
 # --- Omarchy hooks -----------------------------------------------------------

@@ -5,7 +5,10 @@
 -- See https://wiki.hypr.land/Configuring/Basics/Variables/#input
 hl.config({
   input = {
-    kb_layout = "us",
+    -- Keyboard layouts are chosen with Omarchy's native "Keyboard Layouts"
+    -- menu (Setup > Typing) and the bar widget, which persist to
+    -- ~/.config/omarchy/keyboard-layouts. Setting kb_layout here overrides them.
+    -- kb_layout = "us",
 
     -- Use a specific keyboard variant if needed (e.g. intl for international keyboards).
     -- kb_variant = "intl",
