@@ -38,7 +38,7 @@
       "skillFolderHash": "eedaf2562c83155115e9c649fa3ecaac2e10e81d",
       "pluginName": "mattpocock-skills",
       "installedAt": "2026-08-17T06:20:31.070Z",
-      "updatedAt": "2026-08-17T06:20:31.070Z"
+      "updatedAt": "2026-10-06T15:06:23.780Z"
     },
     "domain-modeling": {
       "source": "mattpocock/skills",
@@ -86,14 +86,13 @@
   },
   "lastSelectedAgents": [
     "amp",
-    "antigravity",
-    "antigravity-cli",
     "cline",
     "codex",
     "cursor",
-    "deepagents",
+    "droid",
     "gemini-cli",
     "github-copilot",
+    "kilo",
     "kimi-code-cli",
     "opencode",
     "warp",
